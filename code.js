@@ -1,4 +1,3 @@
-//test
 var movieCasts = {};
 var actorLookup = {};
 var movieLookup = {};
@@ -12,6 +11,20 @@ var removedDocs = [];
 var showingPics;
 var includeDocs;
 var cy;
+
+var addName = function(name) {
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+      eval("var data = " + xmlhttp.responseText + ".results[0]");
+      actorLookup[data.id] = data.name;
+      picLookup[data.id] = data.profile_path;
+      addActor(data.id);
+    }
+  };
+  xmlhttp.open("GET", "http://api.themoviedb.org/3/search/person?query=" + name + "&api_key=ea410068ee0b9ce6c7cb5f5e0202f423", true);
+  xmlhttp.send();
+};
 
 var getYear = function(release_date) {
   if (release_date == null) {
@@ -227,7 +240,7 @@ var changeLayout = function(value) {
       });
       break;
     case 'fdgd':
-      run(.06,5000,.85);
+      run(0.06,500,0.85);
       break;
   }
 };
@@ -314,11 +327,17 @@ var step = function(attr_force, rep_force, damp) {
       }
     });
     cy.edges().forEach(function(ele) {
-     if((ele.source().id()==ele_i.id()||ele.target().id()==ele_i.id())) {
-       var ele_j = ele.source();
-       if(ele_j.id()==ele_i.id()) {ele_j = ele.target();}
-       ele_i.net_force.x += attr_force*(ele_j.position('x')-ele_i.position('x'));
-       ele_i.net_force.y += attr_force*(ele_j.position('y')-ele_i.position('y'));
+      if((ele.source().id()==ele_i.id()||ele.target().id()==ele_i.id())) {
+        var ele_j = ele.source();
+        if(ele_j.id()==ele_i.id()) {ele_j = ele.target();}
+        ele_i.net_force.x += attr_force*(ele_j.position('x')-ele_i.position('x'));
+        ele_i.net_force.y += attr_force*(ele_j.position('y')-ele_i.position('y'));
+      } else {
+        var x = (ele.source().position('x')+ele.target().position('x'))/2;
+        var y = (ele.source().position('y')+ele.target().position('y'))/2;
+        rsq = ((ele_i.position('x')-x)*(ele_i.position('x')-x)+(ele_i.position('y')-y)*(ele_i.position('y')-y));
+        ele_i.net_force.x -= rep_force*(x-ele_i.position('x'))/rsq;
+        ele_i.net_force.y -= rep_force*(y-ele_i.position('y'))/rsq;
       }
     });
     ele_i.velocity.x = (ele_i.velocity.x + ele_i.net_force.x)*damp;
@@ -340,4 +359,5 @@ var run = function(attr_force,rep_force,damp) {
   for(var i=0;i<100;i++) {
     step(attr_force,rep_force,damp);
   }
+  cy.fit();
 };
