@@ -9,6 +9,7 @@ var suggs = [];
 var docLookup = {};
 var removedDocs = [];
 var showingPics;
+var redraw;
 var includeDocs;
 var cy;
 
@@ -69,9 +70,10 @@ var addActor = function(actID) {
       if (showingPics) {
         cy.$('#' + String(actID)).addClass('picture');
       }
+      if (redraw){
       cy.layout({
         name: 'circle'
-      });
+      });}
       for (var i = 0; i < actorRoles.length; i++) {
         var movieID = actorRoles[i].id;
         if (movieCasts[movieID] === undefined) {
@@ -255,6 +257,7 @@ var zoom = function(v) {
 $(document).ready(function() {
   showingPics = document.getElementById("showPics").checked;
   includeDocs = document.getElementById("showDocs").checked;
+  redraw = document.getElementById("redraw").checked;
 
   cy = cytoscape({
     container: document.getElementById('cy'),
