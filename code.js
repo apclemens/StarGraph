@@ -11,6 +11,7 @@ var removedDocs = [];
 var showingPics;
 var redraw;
 var includeDocs;
+var layout = "circle";
 var cy;
 
 var addName = function(name) {
@@ -58,13 +59,15 @@ var addActor = function(actID) {
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+      var pos = centerOfGraph();
       eval("var actorRoles = " + xmlhttp.responseText + ".cast");
       cy.add({
         group: "nodes",
         data: {
           id: actID,
           name: actorLookup[actID],
-          img: 'https://image.tmdb.org/t/p/w396' + picLookup[actID]
+          img: 'https://image.tmdb.org/t/p/w396' + picLookup[actID],
+          
         }
       });
       if (showingPics) {
@@ -72,8 +75,9 @@ var addActor = function(actID) {
       }
       if (redraw){
       cy.layout({
-        name: 'circle'
-      });}
+        name: layout
+      });} else {
+      cy.$('#' + String(actID)).position(pos);}
       for (var i = 0; i < actorRoles.length; i++) {
         var movieID = actorRoles[i].id;
         if (movieCasts[movieID] === undefined) {
@@ -112,9 +116,6 @@ var addActor = function(actID) {
       gotRoles[actID] = true;
       changeDoc($("#showDocs"));
       $("#addActor").val('');
-      $("#addActor").autocomplete({
-        source: []
-      });
     }
   };
   xmlhttp.open("GET", "http://api.themoviedb.org/3/person/" + String(actID) + "/movie_credits?api_key=ea410068ee0b9ce6c7cb5f5e0202f423", true);
@@ -219,6 +220,12 @@ var getSugg = function(key, query) {
 };
 
 var centerOfGraph = function() {
+  if (cy.nodes().length===0) {
+    return {
+    x: cy.width()/2,
+    y: cy.height()/2
+  };
+  } else {
   var x = 0;
   var y = 0;
   cy.nodes().forEach(function(ele) {
@@ -230,19 +237,23 @@ var centerOfGraph = function() {
   return {
     x: x,
     y: y
-  };
+  };}
 };
 
 var changeLayout = function(value) {
   document.getElementById("layout").value = "";
   switch (value) {
     case 'circle':
+	  layout = 'circle';
       cy.layout({
         name: 'circle'
       });
       break;
     case 'fdgd':
-      run(0.06,500,0.85);
+	  layout = 'cola';
+      cy.layout({
+        name: 'cola'
+      });
       break;
   }
 };
@@ -315,52 +326,3 @@ $(document).ready(function() {
     undisplayMovie(evt.cyTarget.id().split('.')[0]);
   });
 });
-
-var step = function(attr_force, rep_force, damp) {
-  var rsq;
-  cy.nodes().forEach(function(ele_i) {
-    ele_i.net_force = {};
-    ele_i.net_force.x = 0;
-    ele_i.net_force.y = 0;
-    cy.nodes().forEach(function(ele_j) {
-      if(ele_i.id()!==ele_j.id()) {
-        rsq = ((ele_i.position('x')-ele_j.position('x'))*(ele_i.position('x')-ele_j.position('x'))+(ele_i.position('y')-ele_j.position('y'))*(ele_i.position('y')-ele_j.position('y')));
-        ele_i.net_force.x += rep_force*(ele_i.position('x')-ele_j.position('x'))/rsq;
-        ele_i.net_force.y += rep_force*(ele_i.position('y')-ele_j.position('y'))/rsq;
-      }
-    });
-    cy.edges().forEach(function(ele) {
-      if((ele.source().id()==ele_i.id()||ele.target().id()==ele_i.id())) {
-        var ele_j = ele.source();
-        if(ele_j.id()==ele_i.id()) {ele_j = ele.target();}
-        ele_i.net_force.x += attr_force*(ele_j.position('x')-ele_i.position('x'));
-        ele_i.net_force.y += attr_force*(ele_j.position('y')-ele_i.position('y'));
-      } else {
-        var x = (ele.source().position('x')+ele.target().position('x'))/2;
-        var y = (ele.source().position('y')+ele.target().position('y'))/2;
-        rsq = ((ele_i.position('x')-x)*(ele_i.position('x')-x)+(ele_i.position('y')-y)*(ele_i.position('y')-y));
-        ele_i.net_force.x -= rep_force*(x-ele_i.position('x'))/rsq;
-        ele_i.net_force.y -= rep_force*(y-ele_i.position('y'))/rsq;
-      }
-    });
-    ele_i.velocity.x = (ele_i.velocity.x + ele_i.net_force.x)*damp;
-    ele_i.velocity.y = (ele_i.velocity.y + ele_i.net_force.y)*damp;
-  });
-  //set new positions
-  cy.nodes().forEach(function(ele) {
-    ele.position('x',ele.position('x')+ele.velocity.x);
-    ele.position('y',ele.position('y')+ele.velocity.y);
-  });
-};
-
-var run = function(attr_force,rep_force,damp) {
-  cy.nodes().forEach(function(ele) {
-    ele.velocity = {};
-    ele.velocity.x = 0;
-    ele.velocity.y = 0;
-  });
-  for(var i=0;i<100;i++) {
-    step(attr_force,rep_force,damp);
-  }
-  cy.fit();
-};
