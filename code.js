@@ -22,126 +22,133 @@ var getYear = function(release_date) {
   }
 };
 
-var tmdbObject = { api_key: "ea410068ee0b9ce6c7cb5f5e0202f423", get_data: function(url, afterCode) {
-  var xmlhttp = new XMLHttpRequest();
-  xmlhttp.onreadystatechange = function() {
-    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-      afterCode(xmlhttp);
-    }
-  };
-  xmlhttp.open("GET", url, true);
-  xmlhttp.send();
-};, addName: function(name) {
-  this.get_data("http://api.themoviedb.org/3/search/person?query=" + name + "&api_key=" + this.api_key, function(xmlhttp) {
-    eval("var data = " + xmlhttp.responseText + ".results[0]");
-    actorLookup[data.id] = data.name;
-    picLookup[data.id] = data.profile_path;
-    this.addActor(data.id);
-  });
-};, updateDocs: function(movieID) {
-  if (docLookup[movieID] === undefined) {
-    this.get_data("http://api.themoviedb.org/3/movie/" + String(movieID) + "?api_key=" + this.api_key, function(xmlhttp) {
-      docLookup[movieID] = false;
-      eval("var genres = " + xmlhttp.responseText + ".genres");
-      for (var i = 0; i < genres.length; i++) {
-        if (genres[i].id == 99) {
-          docLookup[movieID] = true;
+var tmdbObject = {
+  api_key: "ea410068ee0b9ce6c7cb5f5e0202f423",
+  get_data: function(url, afterCode) {
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+      if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+        afterCode(xmlhttp);
+      }
+    };
+    xmlhttp.open("GET", url, true);
+    xmlhttp.send();
+  },
+  addName: function(name) {
+    this.get_data("http://api.themoviedb.org/3/search/person?query=" + name + "&api_key=" + this.api_key, function(xmlhttp) {
+      eval("var data = " + xmlhttp.responseText + ".results[0]");
+      actorLookup[data.id] = data.name;
+      picLookup[data.id] = data.profile_path;
+      this.addActor(data.id);
+    });
+  },
+  updateDocs: function(movieID) {
+    if (docLookup[movieID] === undefined) {
+      this.get_data("http://api.themoviedb.org/3/movie/" + String(movieID) + "?api_key=" + this.api_key, function(xmlhttp) {
+        docLookup[movieID] = false;
+        eval("var genres = " + xmlhttp.responseText + ".genres");
+        for (var i = 0; i < genres.length; i++) {
+          if (genres[i].id == 99) {
+            docLookup[movieID] = true;
+          }
         }
-      }
-    });
-  }
-};, addActor: function(actID) {
-  this.get_data("http://api.themoviedb.org/3/person/" + String(actID) + "/movie_credits?api_key=" + this.api_key, function(xmlhttp) {
-    var pos = centerOfGraph();
-    eval("var actorRoles = " + xmlhttp.responseText + ".cast");
-    cy.add({
-      group: "nodes",
-      data: {
-        id: actID,
-        name: actorLookup[actID],
-        img: 'https://image.tmdb.org/t/p/w396' + picLookup[actID],
-
-      }
-    });
-    if (showingPics) {
-      cy.$('#' + String(actID)).addClass('picture');
-    }
-    if (redraw) {
-      cy.layout({
-        name: currLayout,
-        timeout: 1000
       });
-    } else {
-      cy.$('#' + String(actID)).position(pos);
     }
-    for (var i = 0; i < actorRoles.length; i++) {
-      var movieID = actorRoles[i].id;
-      if (movieCasts[movieID] === undefined) {
-        movieCasts[movieID] = [actID];
-        roleLookup[movieID] = {};
-        roleLookup[movieID][actID] = actorRoles[i].character;
+  },
+  addActor: function(actID) {
+    this.get_data("http://api.themoviedb.org/3/person/" + String(actID) + "/movie_credits?api_key=" + this.api_key, function(xmlhttp) {
+      var pos = centerOfGraph();
+      eval("var actorRoles = " + xmlhttp.responseText + ".cast");
+      cy.add({
+        group: "nodes",
+        data: {
+          id: actID,
+          name: actorLookup[actID],
+          img: 'https://image.tmdb.org/t/p/w396' + picLookup[actID],
+
+        }
+      });
+      if (showingPics) {
+        cy.$('#' + String(actID)).addClass('picture');
+      }
+      if (redraw) {
+        cy.layout({
+          name: currLayout,
+          timeout: 1000
+        });
       } else {
-        if (roleLookup[movieID][actID] === undefined) {
+        cy.$('#' + String(actID)).position(pos);
+      }
+      for (var i = 0; i < actorRoles.length; i++) {
+        var movieID = actorRoles[i].id;
+        if (movieCasts[movieID] === undefined) {
+          movieCasts[movieID] = [actID];
+          roleLookup[movieID] = {};
           roleLookup[movieID][actID] = actorRoles[i].character;
         } else {
-          if (gotRoles[actID] === undefined) {
-            roleLookup[movieID][actID] += " / " + actorRoles[i].character;
+          if (roleLookup[movieID][actID] === undefined) {
+            roleLookup[movieID][actID] = actorRoles[i].character;
+          } else {
+            if (gotRoles[actID] === undefined) {
+              roleLookup[movieID][actID] += " / " + actorRoles[i].character;
+            }
           }
-        }
-        posterLookup[movieID] = actorRoles[i].poster_path;
-        tmdbObject.updateDocs(movieID);
-        var numLines = movieCasts[movieID].length;
-        var movieName = actorRoles[i].title + " (" + getYear(actorRoles[i].release_date) + ")";
-        for (var j = 0; j < numLines; j++) {
-          movieLookup[movieID] = movieName;
-          if (actID !== movieCasts[movieID][j]) {
-            cy.add({
-              group: "edges",
-              data: {
-                id: movieID + '.' + actID + '.' + movieCasts[movieID][j],
-                movie: movieID,
-                source: actID,
-                target: movieCasts[movieID][j]
-              }
-            });
+          posterLookup[movieID] = actorRoles[i].poster_path;
+          tmdbObject.updateDocs(movieID);
+          var numLines = movieCasts[movieID].length;
+          var movieName = actorRoles[i].title + " (" + getYear(actorRoles[i].release_date) + ")";
+          for (var j = 0; j < numLines; j++) {
+            movieLookup[movieID] = movieName;
+            if (actID !== movieCasts[movieID][j]) {
+              cy.add({
+                group: "edges",
+                data: {
+                  id: movieID + '.' + actID + '.' + movieCasts[movieID][j],
+                  movie: movieID,
+                  source: actID,
+                  target: movieCasts[movieID][j]
+                }
+              });
+            }
           }
+          movieCasts[movieID][numLines] = actID;
         }
-        movieCasts[movieID][numLines] = actID;
+      }
+      gotRoles[actID] = true;
+      changeDoc($("#showDocs"));
+      $("#addActor").val('');
+    });
+  },
+  getSugg: function(key, query) {
+    if (key == 13) {
+      this.addActor(suggs[0].data);
+    } else {
+      if (query !== "") {
+        this.get_data("http://api.themoviedb.org/3/search/person?query=" + query + "&api_key=" + this.api_key, function(xmlhttp) {
+          suggs = [];
+          var ret;
+          eval("ret = " + xmlhttp.responseText + '.results');
+          for (i = 0; i < Math.min(10, ret.length); i++) {
+            actorLookup[ret[i].id] = ret[i].name;
+            picLookup[ret[i].id] = ret[i].profile_path;
+            suggs[suggs.length] = {
+              label: ret[i].name,
+              data: ret[i].id
+            };
+          }
+          $("#addActor").autocomplete({
+            source: function(request, response) {
+              response(suggs);
+            },
+            select: function(event, ui) {
+              tmdbObject.addActor(ui.item.data);
+            }
+          });
+        });
       }
     }
-    gotRoles[actID] = true;
-    changeDoc($("#showDocs"));
-    $("#addActor").val('');
-  });
-};, getSugg: function(key, query) {
-  if (key == 13) {
-    this.addActor(suggs[0].data);
-  } else {
-    if (query !== "") {
-      this.get_data("http://api.themoviedb.org/3/search/person?query=" + query + "&api_key=" + this.api_key, function(xmlhttp) {
-        suggs = [];
-        var ret;
-        eval("ret = " + xmlhttp.responseText + '.results');
-        for (i = 0; i < Math.min(10, ret.length); i++) {
-          actorLookup[ret[i].id] = ret[i].name;
-          picLookup[ret[i].id] = ret[i].profile_path;
-          suggs[suggs.length] = {
-            label: ret[i].name,
-            data: ret[i].id
-          };
-        }
-        $("#addActor").autocomplete({
-          source: function(request, response) {
-            response(suggs);
-          },
-          select: function(event, ui) {
-            tmdbObject.addActor(ui.item.data);
-          }
-        });
-      });
-    }
   }
-}; }
+};
 
 var displayMovie = function(movieID) {
   $('#backImage').css('background-image', "url('" + "https://image.tmdb.org/t/p/w396/" + posterLookup[movieID] + "')");
