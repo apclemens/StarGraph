@@ -241,7 +241,6 @@ var centerOfGraph = function() {
 };
 
 var changeLayout = function(value) {
-  document.getElementById("layout").value = "";
   switch (value) {
     case 'circle':
 	  layout = 'circle';
