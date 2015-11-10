@@ -7,7 +7,7 @@
       <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
       <script src="http://cytoscape.github.io/cytoscape.js/api/cytoscape.js-latest/cytoscape.min.js"></script>
       <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-	  <script src="http://marvl.infotech.monash.edu/webcola/cola.v3.min.js"></script>
+      <script src="http://marvl.infotech.monash.edu/webcola/cola.v3.min.js"></script>
       <script src="https://rawgit.com/cytoscape/cytoscape.js-cola/master/cytoscape-cola.js"></script>
       <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
       <script src="code.js"></script>
@@ -31,5 +31,17 @@
          <option value="circle">Circle</option>
          <option value="fdgd">Force-directed</option>
       </select>
+      <div class="popUpBannerBox">
+         <div class="popUpBannerInner">
+            <div class="popUpBannerContent">
+               <h2>About Star Graph</h2>
+               <p><a href="#" class="closeButton">Close</a></p>
+               <p>This site uses <a target="_blank" href="https://jquery.com/">JQuery</a> and <a target="_blank" href="http://js.cytoscape.org/">Cytoscape.js</a> to create the graph.</p>
+               <p>The Cytoscape plugin <a target="_blank" href="https://github.com/cytoscape/cytoscape.js-cola">Cola.js</a> was also used for the force-directed layout.</p>
+               <p>All data and images come from <a target="_blank" href="https://www.themoviedb.org/">The Movie Database</a>.</p>
+            </div>
+         </div>
+      </div>
+      <a href="#" class="float" id="show_about" onclick="showPopUpBanner()" style="bottom:190px;right:10px">about</a>
    </body>
 </html>
