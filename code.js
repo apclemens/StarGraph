@@ -11,22 +11,8 @@ var removedDocs = [];
 var showingPics;
 var redraw;
 var includeDocs;
-var layout = "circle";
+var currLayout = "circle";
 var cy;
-
-var addName = function(name) {
-  var xmlhttp = new XMLHttpRequest();
-  xmlhttp.onreadystatechange = function() {
-    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-      eval("var data = " + xmlhttp.responseText + ".results[0]");
-      actorLookup[data.id] = data.name;
-      picLookup[data.id] = data.profile_path;
-      addActor(data.id);
-    }
-  };
-  xmlhttp.open("GET", "http://api.themoviedb.org/3/search/person?query=" + name + "&api_key=ea410068ee0b9ce6c7cb5f5e0202f423", true);
-  xmlhttp.send();
-};
 
 var getYear = function(release_date) {
   if (release_date == null) {
@@ -36,11 +22,29 @@ var getYear = function(release_date) {
   }
 };
 
-var updateDocs = function(movieID) {
+var tmdbObject = {};
+tmdbObject.api_key = 'ea410068ee0b9ce6c7cb5f5e0202f423';
+tmdbObject.get_data = function(url, afterCode) {
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+      afterCode(xmlhttp);
+    }
+  };
+  xmlhttp.open("GET",url,true);
+  xmlhttp.send();
+};
+tmdbObject.addName = function(name) {
+  this.get_data("http://api.themoviedb.org/3/search/person?query=" + name + "&api_key="+this.api_key, function(xmlhttp) {
+      eval("var data = " + xmlhttp.responseText + ".results[0]");
+      actorLookup[data.id] = data.name;
+      picLookup[data.id] = data.profile_path;
+      this.addActor(data.id);
+  });
+};
+tmdbObject.updateDocs = function(movieID) {
   if (docLookup[movieID] === undefined) {
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.onreadystatechange = function() {
-      if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+    this.get_data("http://api.themoviedb.org/3/movie/" + String(movieID) + "?api_key="+this.api_key, function(xmlhttp) {
         docLookup[movieID] = false;
         eval("var genres = " + xmlhttp.responseText + ".genres");
         for (var i = 0; i < genres.length; i++) {
@@ -48,17 +52,12 @@ var updateDocs = function(movieID) {
             docLookup[movieID] = true;
           }
         }
-      }
-    };
-    xmlhttp.open("GET", "http://api.themoviedb.org/3/movie/" + String(movieID) + "?api_key=ea410068ee0b9ce6c7cb5f5e0202f423", true);
-    xmlhttp.send();
+    });
   }
 };
 
-var addActor = function(actID) {
-  var xmlhttp = new XMLHttpRequest();
-  xmlhttp.onreadystatechange = function() {
-    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+tmdbObject.addActor = function(actID) {
+  this.get_data("http://api.themoviedb.org/3/person/" + String(actID) + "/movie_credits?api_key="+this.api_key, function(xmlhttp) {
       var pos = centerOfGraph();
       eval("var actorRoles = " + xmlhttp.responseText + ".cast");
       cy.add({
@@ -75,7 +74,7 @@ var addActor = function(actID) {
       }
       if (redraw){
       cy.layout({
-        name: layout
+        name: currLayout, timeout:1000
       });} else {
       cy.$('#' + String(actID)).position(pos);}
       for (var i = 0; i < actorRoles.length; i++) {
@@ -93,7 +92,7 @@ var addActor = function(actID) {
             }
           }
           posterLookup[movieID] = actorRoles[i].poster_path;
-          updateDocs(movieID);
+          tmdbObject.updateDocs(movieID);
           var numLines = movieCasts[movieID].length;
           var movieName = actorRoles[i].title + " (" + getYear(actorRoles[i].release_date) + ")";
           for (var j = 0; j < numLines; j++) {
@@ -116,10 +115,37 @@ var addActor = function(actID) {
       gotRoles[actID] = true;
       changeDoc($("#showDocs"));
       $("#addActor").val('');
+  });
+};
+
+tmdbObject.getSugg = function(key, query) {
+  if (key == 13) {
+    this.addActor(suggs[0].data);
+  } else {
+    if (query !== "") {
+      this.get_data("http://api.themoviedb.org/3/search/person?query=" + query + "&api_key="+this.api_key, function(xmlhttp) {
+        suggs = [];
+        var ret;
+        eval("ret = " + xmlhttp.responseText + '.results');
+        for (i = 0; i < Math.min(10, ret.length); i++) {
+          actorLookup[ret[i].id] = ret[i].name;
+          picLookup[ret[i].id] = ret[i].profile_path;
+          suggs[suggs.length] = {
+            label: ret[i].name,
+            data: ret[i].id
+          };
+        }
+        $("#addActor").autocomplete({
+          source: function(request, response) {
+            response(suggs);
+          },
+          select: function(event, ui) {
+            tmdbObject.addActor(ui.item.data);
+          }
+        });
+      });
     }
-  };
-  xmlhttp.open("GET", "http://api.themoviedb.org/3/person/" + String(actID) + "/movie_credits?api_key=ea410068ee0b9ce6c7cb5f5e0202f423", true);
-  xmlhttp.send();
+  }
 };
 
 var displayMovie = function(movieID) {
@@ -184,41 +210,6 @@ var changeDoc = function(cb) {
   }
 };
 
-var getSugg = function(key, query) {
-  if (key == 13) {
-    addActor(suggs[0].data);
-  } else {
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.onreadystatechange = function() {
-      if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-        suggs = [];
-        var ret;
-        eval("ret = " + xmlhttp.responseText + '.results');
-        for (i = 0; i < Math.min(10, ret.length); i++) {
-          actorLookup[ret[i].id] = ret[i].name;
-          picLookup[ret[i].id] = ret[i].profile_path;
-          suggs[suggs.length] = {
-            label: ret[i].name,
-            data: ret[i].id
-          };
-        }
-        $("#addActor").autocomplete({
-          source: function(request, response) {
-            response(suggs);
-          },
-          select: function(event, ui) {
-            addActor(ui.item.data);
-          }
-        });
-      }
-    };
-    if (query !== "") {
-      xmlhttp.open("GET", "http://api.themoviedb.org/3/search/person?query=" + query + "&api_key=ea410068ee0b9ce6c7cb5f5e0202f423", true);
-      xmlhttp.send();
-    }
-  }
-};
-
 var centerOfGraph = function() {
   if (cy.nodes().length===0) {
     return {
@@ -243,15 +234,15 @@ var centerOfGraph = function() {
 var changeLayout = function(value) {
   switch (value) {
     case 'circle':
-	  layout = 'circle';
+	  currLayout = 'circle';
       cy.layout({
         name: 'circle'
       });
       break;
     case 'fdgd':
-	  layout = 'cola';
+	  currLayout = 'cola';
       cy.layout({
-        name: 'cola'
+        name: 'cola', timeout:1000
       });
       break;
   }
