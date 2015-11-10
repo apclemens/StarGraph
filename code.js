@@ -22,9 +22,7 @@ var getYear = function(release_date) {
   }
 };
 
-var tmdbObject = {};
-tmdbObject.api_key = 'ea410068ee0b9ce6c7cb5f5e0202f423';
-tmdbObject.get_data = function(url, afterCode) {
+var tmdbObject = { api_key: "ea410068ee0b9ce6c7cb5f5e0202f423", get_data: function(url, afterCode) {
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
@@ -33,16 +31,14 @@ tmdbObject.get_data = function(url, afterCode) {
   };
   xmlhttp.open("GET", url, true);
   xmlhttp.send();
-};
-tmdbObject.addName = function(name) {
+};, addName: function(name) {
   this.get_data("http://api.themoviedb.org/3/search/person?query=" + name + "&api_key=" + this.api_key, function(xmlhttp) {
     eval("var data = " + xmlhttp.responseText + ".results[0]");
     actorLookup[data.id] = data.name;
     picLookup[data.id] = data.profile_path;
     this.addActor(data.id);
   });
-};
-tmdbObject.updateDocs = function(movieID) {
+};, updateDocs: function(movieID) {
   if (docLookup[movieID] === undefined) {
     this.get_data("http://api.themoviedb.org/3/movie/" + String(movieID) + "?api_key=" + this.api_key, function(xmlhttp) {
       docLookup[movieID] = false;
@@ -54,9 +50,7 @@ tmdbObject.updateDocs = function(movieID) {
       }
     });
   }
-};
-
-tmdbObject.addActor = function(actID) {
+};, addActor: function(actID) {
   this.get_data("http://api.themoviedb.org/3/person/" + String(actID) + "/movie_credits?api_key=" + this.api_key, function(xmlhttp) {
     var pos = centerOfGraph();
     eval("var actorRoles = " + xmlhttp.responseText + ".cast");
@@ -119,9 +113,7 @@ tmdbObject.addActor = function(actID) {
     changeDoc($("#showDocs"));
     $("#addActor").val('');
   });
-};
-
-tmdbObject.getSugg = function(key, query) {
+};, getSugg: function(key, query) {
   if (key == 13) {
     this.addActor(suggs[0].data);
   } else {
@@ -149,7 +141,7 @@ tmdbObject.getSugg = function(key, query) {
       });
     }
   }
-};
+}; }
 
 var displayMovie = function(movieID) {
   $('#backImage').css('background-image', "url('" + "https://image.tmdb.org/t/p/w396/" + posterLookup[movieID] + "')");
@@ -321,7 +313,3 @@ $(document).ready(function() {
     undisplayMovie(evt.cyTarget.id().split('.')[0]);
   });
 });
-
-var showPopUpBanner = function() {
-  $('.popUpBannerBox').fadeIn("2000");
-};
