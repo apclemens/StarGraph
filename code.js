@@ -325,7 +325,3 @@ $(document).ready(function() {
 var showPopUpBanner = function() {
   $('.popUpBannerBox').fadeIn("2000");
 };
-$('.closeButton').click(function() {
-  $('.popUpBannerBox').fadeOut("2000");
-  return false;
-});
