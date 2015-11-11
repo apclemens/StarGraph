@@ -14,7 +14,7 @@ var includeDocs;
 var currLayout = "circle";
 var cy;
 
-var getYear = function(release_date) {
+function getYear(release_date) {
   if (release_date == null) {
     return "";
   } else {
@@ -150,7 +150,7 @@ var tmdbObject = {
   }
 };
 
-var displayMovie = function(movieID) {
+function displayMovie(movieID) {
   $('#backImage').css('background-image', "url('" + "https://image.tmdb.org/t/p/w396/" + posterLookup[movieID] + "')");
   var title = movieLookup[movieID];
   document.getElementById('movieName').innerHTML = title;
@@ -163,7 +163,7 @@ var displayMovie = function(movieID) {
   });
 };
 
-var undisplayMovie = function(movieID) {
+function undisplayMovie(movieID) {
   document.getElementById('movieName').innerHTML = '';
   $('#backImage').css('background-image', "");
   cy.edges().removeClass('highlighted');
@@ -175,7 +175,7 @@ var undisplayMovie = function(movieID) {
   });
 };
 
-var changePictures = function(cb) {
+function changePictures(cb) {
   if (cb.checked) {
     cy.nodes().forEach(function(ele) {
       ele.addClass('picture');
@@ -189,7 +189,7 @@ var changePictures = function(cb) {
   }
 };
 
-var changeDoc = function(cb) {
+function changeDoc(cb) {
   if (cb.checked) {
     includeDocs = true;
     cy.edges().forEach(function(ele) {
@@ -212,7 +212,7 @@ var changeDoc = function(cb) {
   }
 };
 
-var centerOfGraph = function() {
+function centerOfGraph() {
   if (cy.nodes().length === 0) {
     return {
       x: cy.width() / 2,
@@ -234,7 +234,7 @@ var centerOfGraph = function() {
   }
 };
 
-var changeLayout = function(value) {
+function changeLayout(value) {
   switch (value) {
     case 'circle':
       currLayout = 'circle';
@@ -252,9 +252,9 @@ var changeLayout = function(value) {
   }
 };
 
-var zoom = function(v) {
+function zoom(v) {
   cy.zoom({
-    level: Number(v), // the zoom level
+    level: Number(v),
     position: centerOfGraph()
   });
 };
