@@ -103,7 +103,7 @@ var tmdbObject = {
               cy.add({
                 group: "edges",
                 data: {
-                  id: movieID + '.' + actID + '.' + movieCasts[movieID][j],
+                  id: movieID + '.' + Math.min(actID,movieCasts[movieID][j]) + '.' + Math.max(actID,movieCasts[movieID][j]),
                   movie: movieID,
                   source: actID,
                   target: movieCasts[movieID][j]
