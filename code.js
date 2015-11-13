@@ -117,6 +117,7 @@ var tmdbObject = {
       gotRoles[actID] = true;
       changeDoc($("#showDocs"));
       $("#addActor").val('');
+      $("#addActor").autocomplete().close;
     });
   },
   getSugg: function(key, query) {
