@@ -121,7 +121,7 @@ var tmdbObject = {
   },
   getSugg: function(key, query) {
     if (key == 13) {
-      this.addActor(suggs[0].data);
+      this.addName(query);
     } else {
       if (query !== "") {
         this.get_data("http://api.themoviedb.org/3/search/person?query=" + query + "&api_key=" + this.api_key, function(xmlhttp) {
