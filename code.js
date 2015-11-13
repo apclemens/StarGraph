@@ -39,7 +39,7 @@ var tmdbObject = {
       eval("var data = " + xmlhttp.responseText + ".results[0]");
       actorLookup[data.id] = data.name;
       picLookup[data.id] = data.profile_path;
-      this.addActor(data.id);
+      tmdbObject.addActor(data.id);
     });
   },
   updateDocs: function(movieID) {
