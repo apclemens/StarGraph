@@ -20,7 +20,7 @@ function getYear(release_date) {
   } else {
     return release_date.substring(0, 4);
   }
-};
+}
 
 var tmdbObject = {
   api_key: "ea410068ee0b9ce6c7cb5f5e0202f423",
@@ -65,7 +65,6 @@ var tmdbObject = {
           id: actID,
           name: actorLookup[actID],
           img: 'https://image.tmdb.org/t/p/w396' + picLookup[actID],
-
         }
       });
       if (showingPics) {
@@ -103,7 +102,7 @@ var tmdbObject = {
               cy.add({
                 group: "edges",
                 data: {
-                  id: movieID + '.' + Math.min(actID,movieCasts[movieID][j]) + '.' + Math.max(actID,movieCasts[movieID][j]),
+                  id: movieID + '.' + Math.min(actID, movieCasts[movieID][j]) + '.' + Math.max(actID, movieCasts[movieID][j]),
                   movie: movieID,
                   source: actID,
                   target: movieCasts[movieID][j]
@@ -144,7 +143,12 @@ var tmdbObject = {
             select: function(event, ui) {
               tmdbObject.addActor(ui.item.data);
             }
-          });
+          }).data("ui-autocomplete")._renderItem = function(ul, item) {
+            return $("<li></li>")
+              .data("item.autocomplete", item)
+              .append("<img src='" + 'https://image.tmdb.org/t/p/w396' + picLookup[item.data] + "'style='width:30px'>" + item.label)
+              .appendTo(ul);
+          };
         });
       }
     }
@@ -162,7 +166,7 @@ function displayMovie(movieID) {
       ele.target().style('content', roleLookup[movieID][ele.target().id()]);
     }
   });
-};
+}
 
 function undisplayMovie(movieID) {
   document.getElementById('movieName').innerHTML = '';
@@ -174,7 +178,7 @@ function undisplayMovie(movieID) {
       ele.target().style('content', actorLookup[ele.target().id()]);
     }
   });
-};
+}
 
 function changePictures(cb) {
   if (cb.checked) {
@@ -188,7 +192,7 @@ function changePictures(cb) {
     });
     showingPics = false;
   }
-};
+}
 
 function changeDoc(cb) {
   if (cb.checked) {
@@ -211,7 +215,7 @@ function changeDoc(cb) {
       }
     });
   }
-};
+}
 
 function centerOfGraph() {
   if (cy.nodes().length === 0) {
@@ -233,7 +237,7 @@ function centerOfGraph() {
       y: y
     };
   }
-};
+}
 
 function changeLayout(value) {
   switch (value) {
@@ -251,14 +255,14 @@ function changeLayout(value) {
       });
       break;
   }
-};
+}
 
 function zoom(v) {
   cy.zoom({
     level: Number(v),
     position: centerOfGraph()
   });
-};
+}
 
 $(document).ready(function() {
   showingPics = document.getElementById("showPics").checked;
