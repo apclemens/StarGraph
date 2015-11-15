@@ -24,6 +24,7 @@ function addGroup(grp) {
   $("#common_groups").val('')
   for (var i = 0; i < common_groups[grp].length; i++) {
     tmdbObject.addName(common_groups[grp][i]);
+    setTimeout(function(){},500);
   }
 }
 
