@@ -14,6 +14,19 @@ var includeDocs;
 var currLayout = "circle";
 var cy;
 
+var common_groups = {
+  "Dreamlanders": ["Divine","David Lochary","Susan Lowe","Edith Massey","Cookie Mueller","Mary Vivian Pearce","Channing Wilroy","Jean Hill","Mink Stole","Susan Walsh","Paul Swift","George Figgs","Elizabeth Coffey","George Stover","Patty Hearst","Pat Moran","Ed Peranio","Vincent Peranio","Van Smith","Steve Yeager","Ricki Lake"],
+  "Rat Pack": ["Frank Sinatra", "Dean Martin", "Sammy Davis, Jr.", "Peter Lawford", "Joey Bishop"],
+  "Brat Pack": ["Emilio Estevez", "Anthony Michael Hall", "Rob Lowe", "Andrew McCarthy", "Demi Moore", "Judd Nelson", "Molly Ringwald", "Ally Sheedy"]
+};
+
+function addGroup(grp) {
+  $("#common_groups").val('')
+  for (var i = 0; i < common_groups[grp].length; i++) {
+    tmdbObject.addName(common_groups[grp][i]);
+  }
+}
+
 function getYear(release_date) {
   if (release_date == null) {
     return "";
@@ -324,4 +337,9 @@ $(document).ready(function() {
   cy.on('mouseout', 'edge', function(evt) {
     undisplayMovie(evt.cyTarget.id().split('.')[0]);
   });
+  var grpSlctHTML = '<option value="">Select a common group</option>';
+  for (var i = 0; i < Object.keys(common_groups).length; i++) {
+    grpSlctHTML += '<option value="' + Object.keys(common_groups)[i] + '">' + Object.keys(common_groups)[i] + '</option>';
+  };
+  document.getElementById('common_groups').innerHTML = grpSlctHTML;
 });
