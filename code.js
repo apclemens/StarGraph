@@ -319,8 +319,4 @@ $(document).ready(function() {
     grpSlctHTML += '<option value="' + Object.keys(common_groups)[i] + '">' + Object.keys(common_groups)[i] + '</option>';
   }
   document.getElementById('common_groups').innerHTML = grpSlctHTML;
-  
-  tmdbObject.addName('tom cruise');
-  tmdbObject.addName('philip seymour hoffman');
-  tmdbObject.addName('julianne moore');
 });
