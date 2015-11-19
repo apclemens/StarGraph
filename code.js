@@ -31,7 +31,7 @@ function getMovieList() {
   var toDisplay = '';
   for(var i=0;i<movies.length;i++) {
     movie = movieLookup[movies[i][0]];
-    toDisplay += '<div class="movieList" onmouseenter="displayMovie('+movies[i][0]+')" onmouseleave="undisplayMovie('+movies[i][0]+')">'+movie + ' - ' + String((1+Math.sqrt(1+8*movies[i][1]))/2) + '</div>';
+    toDisplay += '<div class="movieList" onmouseenter="displayMovie('+movies[i][0]+', false)" onmouseleave="undisplayMovie('+movies[i][0]+')">'+movie + ' - ' + String((1+Math.sqrt(1+8*movies[i][1]))/2) + '</div>';
   }
   document.getElementById('movieList').innerHTML = toDisplay;
 }
@@ -186,10 +186,11 @@ var tmdbObject = {
   }
 };
 
-function displayMovie(movieID) {
+function displayMovie(movieID, showName) {
   $('#backImage').css('background-image', "url('" + "https://image.tmdb.org/t/p/w396/" + posterLookup[movieID] + "')");
   var title = movieLookup[movieID];
-  document.getElementById('movieName').innerHTML = title;
+  if (showName) {
+  document.getElementById('movieName').innerHTML = title;}
   cy.edges().forEach(function(ele) {
     if (ele.id().split('.')[0] == movieID) {
       ele.addClass('highlighted');
@@ -308,7 +309,7 @@ $(document).ready(function() {
     cy.$('#' + evt.cyTarget.id()).remove();
   });
   cy.on('mouseover', 'edge', function(evt) {
-    displayMovie(evt.cyTarget.id().split('.')[0]);
+    displayMovie(evt.cyTarget.id().split('.')[0], true);
   });
   cy.on('mouseout', 'edge', function(evt) {
     undisplayMovie(evt.cyTarget.id().split('.')[0]);
@@ -318,4 +319,8 @@ $(document).ready(function() {
     grpSlctHTML += '<option value="' + Object.keys(common_groups)[i] + '">' + Object.keys(common_groups)[i] + '</option>';
   }
   document.getElementById('common_groups').innerHTML = grpSlctHTML;
+  
+  tmdbObject.addName('tom cruise');
+  tmdbObject.addName('philip seymour hoffman');
+  tmdbObject.addName('julianne moore');
 });
