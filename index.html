@@ -1,44 +1,48 @@
 <DOCTYPE html>
-<html>
-   <head>
-      <link href="style.css" rel="stylesheet" />
-      <meta charset=utf-8 />
-      <title>Star Graph</title>
-      <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-      <script src="http://cytoscape.github.io/cytoscape.js/api/cytoscape.js-latest/cytoscape.min.js"></script>
-      <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-      <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-      <script src="code.js"></script>
-   </head>
-   <body>
-      <div id="backImage"></div>
-      <div id="attribute"></div>
-      <div id="cy"></div>
-      <div id="movieName"></div>
-      <input type="text" name="search" id="addActor" class="float input" style="top:15px; left:15px" onkeyup="tmdbObject.getSugg(event.keyCode, this.value)" placeholder="Add an actor" />
-     <div id="movieList" class="float" style="top:60px; left:15px"></div>
-      <label style="bottom:50px" class="float check">
-      <input type="checkbox" id="redraw" onclick="redraw = !redraw" checked> Redraw graph after adding actor </label>
-      <label style="bottom:10px" class="float check">
-      <input type="checkbox" id="showPics" onclick="changePictures(this)"> Show pictures </label>
-      <button class="float control" style="bottom: 70px; right: 10px" onclick="cy.fit()">Fit to screen</button>
-      <button class="float control" style="bottom: 100px; right: 10px" onclick="cy.center()">Center graph</button>
-      <input id="zoom" class="float control" type="range" name="points" min="0.1" max="3" step=".1" style="bottom:130px; right:10px" oninput="zoom(this.value);">
-     <select id="common_groups" class="float control" style="bottom:220px; right: 10px" onchange="addGroup(this.value);">
-       <option value="">Select a common group</option>
-     </select>
-      <div class="popUpBannerBox">
-         <div class="popUpBannerInner">
-            <div class="popUpBannerContent">
-               <h2>About Star Graph</h2>
-               <p><a href="javascript:void(0)" class="closeButton" onclick="$('.popUpBannerBox').fadeOut('2000')">Close</a></p>
-               <p>Star Graph is a site that creates <a target="_blank" href="https://en.wikipedia.org/wiki/Co-stardom_network">co-stardom networks</a> between film actors.</p>
-               <p>Add an actor by typing his or her name in the top left field.  Remove an actor by right-clicking his or her node.</p>
-               <p>This site uses <a target="_blank" href="https://jquery.com/">jQuery</a> and <a target="_blank" href="http://js.cytoscape.org/">Cytoscape.js</a> to create the graph.</p>
-               <p>All data and images come from <a target="_blank" href="https://www.themoviedb.org/">The Movie Database</a>.</p>
+    <html>
+
+    <head>
+        <link href="style.css" rel="stylesheet" />
+        <meta charset=utf-8 />
+        <title>Star Graph</title>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+        <script src="http://cytoscape.github.io/cytoscape.js/api/cytoscape.js-latest/cytoscape.min.js"></script>
+        <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+        <script src="code.js"></script>
+    </head>
+
+    <body>
+        <div id="backImage"></div>
+        <div id="attribute"></div>
+        <div id="cy"></div>
+        <div id="movieName"></div>
+        <input type="text" name="search" id="addActor" class="float input" style="top:15px; left:15px" onkeyup="tmdbObject.getSugg(event.keyCode, this.value)" placeholder="Add an actor" />
+        <div id="movieList" class="float" style="top:60px; left:15px"></div>
+        <label style="bottom:50px" class="float check">
+            <input type="checkbox" id="redraw" onclick="redraw = !redraw" checked> Redraw graph after adding actor </label>
+        <label style="bottom:10px" class="float check">
+            <input type="checkbox" id="showPics" onclick="changePictures(this)"> Show pictures </label>
+        <button class="float control" style="bottom: 170px; left: 10px" onclick="cy.fit()">Fit to screen</button>
+        <button class="float control" style="bottom: 100px; left: 10px" onclick="cy.center()">Center graph</button>
+        <input id="zoom" class="float control" type="range" name="points" min="0.1" max="3" step=".1" style="bottom:130px; left:10px" oninput="zoom(this.value);">
+        <select id="common_groups" class="float control" style="bottom:220px; left: 10px" onchange="addGroup(this.value);">
+            <option value="">Select a common group</option>
+        </select>
+        <div class="popUpBannerBox">
+            <div class="popUpBannerInner">
+                <div class="popUpBannerContent">
+                    <h2>About Star Graph</h2>
+                    <p><a href="javascript:void(0)" class="closeButton" onclick="$('.popUpBannerBox').fadeOut('2000')">Close</a>
+                    </p>
+                    <p>Star Graph is a site that creates <a target="_blank" href="https://en.wikipedia.org/wiki/Co-stardom_network">co-stardom networks</a> between film actors.</p>
+                    <p>Add an actor by typing his or her name in the top left field. Remove an actor by right-clicking his or her node.</p>
+                    <p>This site uses <a target="_blank" href="https://jquery.com/">jQuery</a> and <a target="_blank" href="http://js.cytoscape.org/">Cytoscape.js</a> to create the graph.</p>
+                    <p>All data and images come from <a target="_blank" href="https://www.themoviedb.org/">The Movie Database</a>.</p>
+                </div>
             </div>
-         </div>
-      </div>
-      <a href="javascript:void(0)" class="float" id="show_about" onclick="$('.popUpBannerBox').fadeIn('2000');" style="bottom:190px;right:10px;color:black">about</a>
-   </body>
-</html>
+        </div>
+        <a href="javascript:void(0)" class="float" id="show_about" onclick="$('.popUpBannerBox').fadeIn('2000');" style="bottom:15px;right:15px;color:black">about</a>
+    </body>
+
+    </html>
