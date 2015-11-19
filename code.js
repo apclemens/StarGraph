@@ -15,24 +15,23 @@ var common_groups = {'Brat Pack': ['2880', '1904', '2879', '37041', '3416', '216
 function getMovieList() {
   var movieTally = {};
   cy.edges().forEach(function(ele) {
-    movie = movieLookup[ele.id().split('.')[0]];
+    movie = ele.id().split('.')[0];
 	  if (movieTally[movie] === undefined) {
   	  movieTally[movie] = 0;
   	}
   	movieTally[movie]++;
   });
-var movies = Object.keys(movieTally).map(function(key) {
+  var movies = Object.keys(movieTally).map(function(key) {
     return [key, movieTally[key]];
-});
-
-// Sort the array based on the second element
-movies.sort(function(first, second) {
+  });
+  // Sort the array based on the second element
+  movies.sort(function(first, second) {
     return second[1] - first[1];
-});
+  });
   var toDisplay = '';
   for(var i=0;i<movies.length;i++) {
-    movie = movies[i][0];
-    toDisplay += movie + ' - ' + String((1+Math.sqrt(1+8*movieTally[movie]))/2) + '<br>';
+    movie = movieLookup[movies[i][0]];
+    toDisplay += '<div class="movieList" onmouseenter="displayMovie('+movies[i][0]+')" onmouseleave="undisplayMovie('+movies[i][0]+')">'+movie + ' - ' + String((1+Math.sqrt(1+8*movies[i][1]))/2) + '</div>';
   }
   document.getElementById('movieList').innerHTML = toDisplay;
 }
@@ -45,7 +44,7 @@ function addGroup(grp) {
   for (i = 0; i < common_groups[grp].length; i++) {
     tmdbObject.addActor(common_groups[grp][i]);
   }
-  // do it twice in case some got missed
+  // Do it twice in case some got missed.  No, I couldn't think of a better way.
   for (i = 0; i < common_groups[grp].length; i++) {
     tmdbObject.addActor(common_groups[grp][i]);
   }
