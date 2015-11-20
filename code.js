@@ -10,8 +10,6 @@ var showingPics;
 var redraw;
 var cy;
 
-var common_groups = {'Brat Pack': ['2880', '1904', '2879', '37041', '3416', '21624', '21625', '12851'], 'Rat Pack': ['4347', '4299', '20156', '4353', '4361'], 'Dreamlanders': ['10369', '10370', '76495', '10373', '10375', '10371', '10374', '76496', '9292', '10376', '76516', '76517', '77242', '77250', '76505', '10368', '70233'],"AFI's 100 Years...100 Stars (female)": ['6598', '3380', '1932', '4111', '19549', '3149', '3635', '9066', '2896', '31550', '14974', '30155', '4070', '30003', '103616', '10538', '8828', '95624', '33741', '7570', '16757', '82315', '2491', '100047', '25787'], 'Frat Pack - Apatow Chapter': ['19274', '22226', '21007', '41089', '41088', '17051'], 'Brit Pack': ['11856', '27422', '64', '4757', '5472', '47654', '3129', '1050726'], 'Frat Pack': ['7399', '70851', '887', '36422', '23659', '4937', '4495'], "AFI's 100 Years...100 Stars (male)": ['4110', '2638', '854', '3084', '30181', '4958', '11492', '5788', '12147', '1175629', '4068', '8487', '4165', '3359', '13294', '40', '2090', '2749', '13784', '10798', '10799', '10800', '30014', '8635', '16897', '10158', '13566', '8252'], 'Happy Madison Gang': ['60949', '60950', '884', '32895', '2632', '58198', '1241', '32907', '16165', '20818', '58478', '21485', '58477', '20819']};
-
 function getMovieList() {
   return;
   var movieTally = {};
@@ -35,20 +33,6 @@ function getMovieList() {
     toDisplay += '<div class="movieList" onmouseenter="displayMovie('+movies[i][0]+', false)" onmouseleave="undisplayMovie('+movies[i][0]+')">'+movie + ' - ' + String((1+Math.sqrt(1+8*movies[i][1]))/2) + '</div>';
   }
   document.getElementById('movieList').innerHTML = toDisplay;
-}
-
-function addGroup(grp) {
-  cy.nodes().forEach(function(ele) {
-    ele.remove();
-  });
-  $("#common_groups").val('');
-  for (i = 0; i < common_groups[grp].length; i++) {
-    tmdbObject.addActor(common_groups[grp][i]);
-  }
-  // Do it twice in case some got missed.  No, I couldn't think of a better way.
-  for (i = 0; i < common_groups[grp].length; i++) {
-    tmdbObject.addActor(common_groups[grp][i]);
-  }
 }
 
 function getYear(release_date) {
