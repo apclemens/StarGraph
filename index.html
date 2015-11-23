@@ -20,7 +20,7 @@
         <input type="text" name="search" id="addActor" class="float input" style="top:15px; left:15px" onkeyup="tmdbObject.getSugg(event.keyCode, this.value)" placeholder="Add an actor" />
         <div id="movieList" class="float" style="top:60px; left:15px"></div>
         <label style="bottom:50px" class="float check">
-            <input type="checkbox" id="redraw" onclick="redraw = !redraw" checked> Redraw graph after adding actor </label>
+            <input type="checkbox" id="redraw" onclick="redraw = !redraw" checked> Redraw graph after change </label>
         <label style="bottom:10px" class="float check">
             <input type="checkbox" id="showPics" onclick="changePictures(this)"> Show pictures </label>
         <button class="float control" style="bottom: 170px; left: 10px" onclick="cy.fit()">Fit to screen</button>

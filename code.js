@@ -292,6 +292,7 @@ $(document).ready(function() {
   });
   cy.on('cxttap', 'node', function(evt) {
     cy.$('#' + evt.cyTarget.id()).remove();
+    cy.layout({name: "circle"});
   });
   cy.on('mouseover', 'edge', function(evt) {
     displayMovie(evt.cyTarget.id().split('.')[0], true);
