@@ -15,10 +15,10 @@ function getMovieList() {
   var movieTally = {};
   cy.edges().forEach(function(ele) {
     movie = ele.id().split('.')[0];
-	  if (movieTally[movie] === undefined) {
-  	  movieTally[movie] = 0;
-  	}
-  	movieTally[movie]++;
+    if (movieTally[movie] === undefined) {
+      movieTally[movie] = 0;
+    }
+    movieTally[movie]++;
   });
   var movies = Object.keys(movieTally).map(function(key) {
     return [key, movieTally[key]];
@@ -28,9 +28,9 @@ function getMovieList() {
     return second[1] - first[1];
   });
   var toDisplay = '';
-  for(var i=0;i<movies.length;i++) {
+  for (var i = 0; i < movies.length; i++) {
     movie = movieLookup[movies[i][0]];
-    toDisplay += '<div class="movieList" onmouseenter="displayMovie('+movies[i][0]+', false)" onmouseleave="undisplayMovie('+movies[i][0]+')">'+movie + ' - ' + String((1+Math.sqrt(1+8*movies[i][1]))/2) + '</div>';
+    toDisplay += '<div class="movieList" onmouseenter="displayMovie(' + movies[i][0] + ', false)" onmouseleave="undisplayMovie(' + movies[i][0] + ')">' + movie + ' - ' + String((1 + Math.sqrt(1 + 8 * movies[i][1])) / 2) + '</div>';
   }
   document.getElementById('movieList').innerHTML = toDisplay;
 }
@@ -64,8 +64,8 @@ var tmdbObject = {
     });
   },
   getName: function(actID) {
-    this.get_data("http://api.themoviedb.org/3/person/"+String(actID) + "?api_key=" + this.api_key, function(xmlhttp) {
-      eval("var info="+xmlhttp.responseText);
+    this.get_data("http://api.themoviedb.org/3/person/" + String(actID) + "?api_key=" + this.api_key, function(xmlhttp) {
+      eval("var info=" + xmlhttp.responseText);
       actorLookup[actID] = info.name;
       picLookup[actID] = info.profile_path;
     });
@@ -175,7 +175,8 @@ function displayMovie(movieID, showName) {
   $('#backImage').css('background-image', "url('" + "https://image.tmdb.org/t/p/w396/" + posterLookup[movieID] + "')");
   var title = movieLookup[movieID];
   if (showName) {
-  document.getElementById('movieName').innerHTML = title;}
+    document.getElementById('movieName').innerHTML = title;
+  }
   cy.edges().forEach(function(ele) {
     if (ele.id().split('.')[0] == movieID) {
       ele.addClass('highlighted');
@@ -292,8 +293,11 @@ $(document).ready(function() {
   });
   cy.on('cxttap', 'node', function(evt) {
     cy.$('#' + evt.cyTarget.id()).remove();
-    if(redraw){
-    cy.layout({name: "circle"});
+    if (redraw) {
+      cy.layout({
+        name: "circle"
+      });
+    }
   });
   cy.on('mouseover', 'edge', function(evt) {
     displayMovie(evt.cyTarget.id().split('.')[0], true);
