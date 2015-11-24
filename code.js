@@ -305,9 +305,4 @@ $(document).ready(function() {
   cy.on('mouseout', 'edge', function(evt) {
     undisplayMovie(evt.cyTarget.id().split('.')[0]);
   });
-  var grpSlctHTML = '<option value="">Common groups</option>';
-  for (var i = 0; i < Object.keys(common_groups).length; i++) {
-    grpSlctHTML += '<option value="' + Object.keys(common_groups)[i] + '">' + Object.keys(common_groups)[i] + '</option>';
-  }
-  document.getElementById('common_groups').innerHTML = grpSlctHTML;
 });
