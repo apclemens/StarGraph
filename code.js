@@ -162,7 +162,7 @@ var tmdbObject = {
           }).data("ui-autocomplete")._renderItem = function(ul, item) {
             return $("<li></li>")
               .data("item.autocomplete", item)
-              .append("<img src='" + 'https://image.tmdb.org/t/p/w396' + picLookup[item.data] + "'style='width:30px'>" + item.label)
+              .append("<img src='" + 'https://image.tmdb.org/t/p/w396' + picLookup[item.data] + "'style='height:30px'>" + item.label)
               .appendTo(ul);
           };
         });
