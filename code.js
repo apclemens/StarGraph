@@ -6,6 +6,7 @@ var posterLookup = {};
 var picLookup = {};
 var gotRoles = {};
 var suggs = [];
+var avoidingMovies = [];
 var showingPics;
 var redraw;
 var cy;
@@ -114,7 +115,7 @@ var tmdbObject = {
           var movieName = actorRoles[i].title + " (" + getYear(actorRoles[i].release_date) + ")";
           for (var j = 0; j < numLines; j++) {
             movieLookup[movieID] = movieName;
-            if (actID !== movieCasts[movieID][j]) {
+            if (actID !== movieCasts[movieID][j] && avoidingMovies.indexOf(String(movieID)) == -1) {
               cy.add({
                 group: "edges",
                 data: {
@@ -212,6 +213,20 @@ function changePictures(cb) {
   }
 }
 
+function removeMovie(movieID) {
+  undisplayMovie(movieID);
+  var toRemove = [];
+  avoidingMovies[avoidingMovies.length] = movieID;
+  cy.edges().forEach(function(ele) {
+    if(ele.id().split('.')[0]==movieID) {
+      toRemove[toRemove.length] = ele.id();
+    }
+  });
+  for(var i=0;i<toRemove.length;i++) {
+    cy.getElementById(toRemove[i]).remove();
+  }
+}
+
 function centerOfGraph() {
   if (cy.nodes().length === 0) {
     return {
@@ -298,6 +313,9 @@ $(document).ready(function() {
         name: "circle"
       });
     }
+  });
+  cy.on('cxttap', 'edge', function(evt) {
+    removeMovie(evt.cyTarget.id().split('.')[0]);
   });
   cy.on('mouseover', 'edge', function(evt) {
     displayMovie(evt.cyTarget.id().split('.')[0], true);
