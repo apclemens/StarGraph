@@ -238,8 +238,8 @@ function addEdge(movieID, source, target) {
     data: {
       id: movieID + '.' + Math.min(source, target) + '.' + Math.max(source, target),
       movie: movieID,
-      source: source,
-      target: target
+      source: Math.min(source, target),
+      target: Math.max(source, target)
     }
   });
 }
