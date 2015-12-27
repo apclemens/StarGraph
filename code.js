@@ -233,10 +233,14 @@ function removeMovie(movieID) {
 }
 
 function addEdge(movieID, source, target) {
+  var id = movieID + '.' + Math.min(source, target) + '.' + Math.max(source, target);
+  if (!cy.$('#' + id).isEdge()) {
+    return;
+  }
   cy.add({
     group: "edges",
     data: {
-      id: movieID + '.' + Math.min(source, target) + '.' + Math.max(source, target),
+      id: id,
       movie: movieID,
       source: Math.min(source, target),
       target: Math.max(source, target)
