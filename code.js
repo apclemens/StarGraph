@@ -12,7 +12,6 @@ var redraw;
 var cy;
 
 function getMovieList() {
-  return;
   var movieTally = {};
   cy.edges().forEach(function(ele) {
     movie = ele.id().split('.')[0];
@@ -31,9 +30,15 @@ function getMovieList() {
   var toDisplay = '';
   for (var i = 0; i < movies.length; i++) {
     movie = movieLookup[movies[i][0]];
-    toDisplay += '<div class="movieList" onmouseenter="displayMovie(' + movies[i][0] + ', false)" onmouseleave="undisplayMovie(' + movies[i][0] + ')">' + movie + ' - ' + String((1 + Math.sqrt(1 + 8 * movies[i][1])) / 2) + '</div>';
+    toDisplay += '<a>' + movie + ' - ' + String((1 + Math.sqrt(1 + 8 * movies[i][1])) / 2) + '</a></br>';
   }
-  document.getElementById('movieList').innerHTML = toDisplay;
+  if(avoidingMovies.length>0) {
+    toDisplay += '</br><b>Deleted movies:</b></br>';
+    for(i=0;i<avoidingMovies.length;i++) {
+      toDisplay += '<a onclick="restoreMovie('+avoidingMovies[i]+')">'+movieLookup[avoidingMovies[i]] + '</a></br>';
+    }
+  }
+  document.getElementById('list').innerHTML = toDisplay;
 }
 
 function getYear(release_date) {
@@ -225,6 +230,27 @@ function removeMovie(movieID) {
   for(var i=0;i<toRemove.length;i++) {
     cy.getElementById(toRemove[i]).remove();
   }
+  getMovieList();
+}
+
+function restoreMovie(movieID) {
+  for(var i=0;i<Object.keys(roleLookup[movieID]).length;i++) {
+    for(var j=0;j<Object.keys(roleLookup[movieID]).length;j++) {
+      if(i==j){continue;}
+      cy.add({
+group: "edges",
+data: {
+id: movieID + '.' + Math.min(Object.keys(roleLookup[movieID])[i], Object.keys(roleLookup[movieID])[j]) + '.' + Math.max(Object.keys(roleLookup[movieID])[i], roleLookup[movieID][j]),
+movie: movieID,
+source: Object.keys(roleLookup[movieID])[i],
+target: Object.keys(roleLookup[movieID])[j]
+}
+});
+    }
+  }
+  var index = avoidingMovies.indexOf(movieID);
+  avoidingMovies.splice(index,1);
+  getMovieList();
 }
 
 function centerOfGraph() {
