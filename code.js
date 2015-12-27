@@ -241,7 +241,7 @@ function restoreMovie(movieID) {
       cy.add({
 group: "edges",
 data: {
-id: movieID + '.' + Math.min(Object.keys(roleLookup[movieID])[i], Object.keys(roleLookup[movieID])[j]) + '.' + Math.max(Object.keys(roleLookup[movieID])[i], roleLookup[movieID][j]),
+id: movieID + '.' + Math.min(Object.keys(roleLookup[movieID])[i], Object.keys(roleLookup[movieID])[j]) + '.' + Math.max(Object.keys(roleLookup[movieID])[i], Object.keys(roleLookup[movieID])[j]),
 movie: movieID,
 source: Object.keys(roleLookup[movieID])[i],
 target: Object.keys(roleLookup[movieID])[j]
