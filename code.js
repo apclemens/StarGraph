@@ -32,11 +32,11 @@ function getMovieList() {
     movie = movieLookup[movies[i][0]];
     toDisplay += '<a>' + movie + ' - ' + String((1 + Math.sqrt(1 + 8 * movies[i][1])) / 2) + '</a></br>';
   }
-  if(avoidingMovies.length>0) {
+  if (avoidingMovies.length > 0) {
     avoidingMovies.sort();
     toDisplay += '</br><b>Deleted movies:</b></br>';
-    for(i=0;i<avoidingMovies.length;i++) {
-      toDisplay += '<a onclick="restoreMovie('+avoidingMovies[i]+')">'+movieLookup[avoidingMovies[i]] + '</a></br>';
+    for (i = 0; i < avoidingMovies.length; i++) {
+      toDisplay += '<a onclick="restoreMovie(' + avoidingMovies[i] + ')">' + movieLookup[avoidingMovies[i]] + '</a></br>';
     }
   }
   document.getElementById('list').innerHTML = toDisplay;
@@ -122,15 +122,7 @@ var tmdbObject = {
           for (var j = 0; j < numLines; j++) {
             movieLookup[movieID] = movieName;
             if (actID !== movieCasts[movieID][j] && avoidingMovies.indexOf(String(movieID)) == -1) {
-              cy.add({
-                group: "edges",
-                data: {
-                  id: movieID + '.' + Math.min(actID, movieCasts[movieID][j]) + '.' + Math.max(actID, movieCasts[movieID][j]),
-                  movie: movieID,
-                  source: actID,
-                  target: movieCasts[movieID][j]
-                }
-              });
+              addEdge(movieID, actID, movieCasts[movieID][j]);
             }
           }
           movieCasts[movieID][numLines] = actID;
@@ -167,9 +159,15 @@ var tmdbObject = {
               tmdbObject.addActor(ui.item.data);
             }
           }).data("ui-autocomplete")._renderItem = function(ul, item) {
+            var imgURL;
+            if (picLookup[item.data] === null) {
+              imgURL = "https://assets.tmdb.org/assets/91c0541cff7ec4947514edd379f0ffd1/images/no-profile-w185.jpg";
+            } else {
+              imgURL = 'https://image.tmdb.org/t/p/w396' + picLookup[item.data];
+            }
             return $("<li></li>")
               .data("item.autocomplete", item)
-              .append("<img src='" + 'https://image.tmdb.org/t/p/w396' + picLookup[item.data] + "'style='height:30px'>" + item.label)
+              .append("<img src='" + imgURL + "'style='height:30px'>" + '<a class="float" style="left:45px">' + item.label + '</a>')
               .appendTo(ul);
           };
         });
@@ -224,33 +222,39 @@ function removeMovie(movieID) {
   var toRemove = [];
   avoidingMovies[avoidingMovies.length] = movieID;
   cy.edges().forEach(function(ele) {
-    if(ele.id().split('.')[0]==movieID) {
+    if (ele.id().split('.')[0] == movieID) {
       toRemove[toRemove.length] = ele.id();
     }
   });
-  for(var i=0;i<toRemove.length;i++) {
+  for (var i = 0; i < toRemove.length; i++) {
     cy.getElementById(toRemove[i]).remove();
   }
   getMovieList();
 }
 
-function restoreMovie(movieID) {
-  for(var i=0;i<Object.keys(roleLookup[movieID]).length;i++) {
-    for(var j=0;j<Object.keys(roleLookup[movieID]).length;j++) {
-      if(i==j){continue;}
-      cy.add({
-group: "edges",
-data: {
-id: movieID + '.' + Math.min(Object.keys(roleLookup[movieID])[i], Object.keys(roleLookup[movieID])[j]) + '.' + Math.max(Object.keys(roleLookup[movieID])[i], Object.keys(roleLookup[movieID])[j]),
-movie: movieID,
-source: Object.keys(roleLookup[movieID])[i],
-target: Object.keys(roleLookup[movieID])[j]
+function addEdge(movieID, source, target) {
+  cy.add({
+    group: "edges",
+    data: {
+      id: movieID + '.' + Math.min(source, target) + '.' + Math.max(source, target),
+      movie: movieID,
+      source: source,
+      target: target
+    }
+  });
 }
-});
+
+function restoreMovie(movieID) {
+  for (var i = 0; i < Object.keys(roleLookup[movieID]).length; i++) {
+    for (var j = 0; j < Object.keys(roleLookup[movieID]).length; j++) {
+      if (i == j) {
+        continue;
+      }
+      addEdge(movieID, Object.keys(roleLookup[movieID])[i], Object.keys(roleLookup[movieID])[j]);
     }
   }
   var index = avoidingMovies.indexOf(movieID);
-  avoidingMovies.splice(index,1);
+  avoidingMovies.splice(index, 1);
   getMovieList();
 }
 
