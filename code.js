@@ -33,6 +33,7 @@ function getMovieList() {
     toDisplay += '<a>' + movie + ' - ' + String((1 + Math.sqrt(1 + 8 * movies[i][1])) / 2) + '</a></br>';
   }
   if(avoidingMovies.length>0) {
+    avoidingMovies.sort();
     toDisplay += '</br><b>Deleted movies:</b></br>';
     for(i=0;i<avoidingMovies.length;i++) {
       toDisplay += '<a onclick="restoreMovie('+avoidingMovies[i]+')">'+movieLookup[avoidingMovies[i]] + '</a></br>';
