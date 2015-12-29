@@ -97,7 +97,9 @@ var tmdbObject = {
       }
       if (redraw) {
         cy.layout({
-          name: "circle",
+          name: $('input[name="layout"]:checked').val(),
+          animate:false,
+          padding:10
         });
       } else {
         cy.$('#' + String(actID)).position(pos);
@@ -323,8 +325,9 @@ $(document).ready(function() {
         'line-color': 'black',
       }),
     layout: {
-      name: 'circle',
-      padding: 10
+      name: $('input[name="layout"]:checked').val(),
+      padding: 10,
+      animate:false
     },
     ready: function() {}
   });
