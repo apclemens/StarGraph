@@ -96,11 +96,7 @@ var tmdbObject = {
         cy.$('#' + String(actID)).addClass('picture');
       }
       if (redraw) {
-        cy.layout({
-          name: $('input[name="layout"]:checked').val(),
-          animate:false,
-          padding:10
-        });
+        redrawGraph();
       } else {
         cy.$('#' + String(actID)).position(pos);
       }
@@ -177,6 +173,14 @@ var tmdbObject = {
     }
   }
 };
+
+function redrawGraph() {
+  cy.layout({
+    name: $('input[name="layout"]:checked').val(),
+    animate:false,
+    padding:10
+  });
+}
 
 function displayMovie(movieID, showName) {
   $('#backImage').css('background-image', "url('" + "https://image.tmdb.org/t/p/w396/" + posterLookup[movieID] + "')");
@@ -347,9 +351,7 @@ $(document).ready(function() {
   cy.on('cxttap', 'node', function(evt) {
     cy.$('#' + evt.cyTarget.id()).remove();
     if (redraw) {
-      cy.layout({
-        name: "circle"
-      });
+      redrawGraph();
     }
   });
   cy.on('cxttap', 'edge', function(evt) {
