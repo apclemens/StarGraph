@@ -177,14 +177,15 @@ var tmdbObject = {
 function redrawGraph() {
   cy.layout({
     name: $('input[name="layout"]:checked').val(),
-    animate:false,
-    padding:10
+    animate: false,
+    padding: 10
   });
 }
 
 function displayMovie(movieID, showName) {
   $('#backImage').css('background-image', "url('" + "https://image.tmdb.org/t/p/w396/" + posterLookup[movieID] + "')");
   var title = movieLookup[movieID];
+  var changedNodes = [];
   if (showName) {
     document.getElementById('movieName').innerHTML = title;
   }
@@ -193,6 +194,18 @@ function displayMovie(movieID, showName) {
       ele.addClass('highlighted');
       ele.source().style('content', roleLookup[movieID][ele.source().id()]);
       ele.target().style('content', roleLookup[movieID][ele.target().id()]);
+      changedNodes[changedNodes.length] = ele.source().id();
+      changedNodes[changedNodes.length] = ele.target().id();
+    }
+  });
+  cy.nodes().forEach(function(ele) {
+    if (changedNodes.indexOf(ele.id()) == -1) {
+      ele.style('background-opacity', 0.3);
+      if (showingPics) {
+        ele.style('background-image-opacity', 0.3);
+      }
+    } else {
+      ele.style('font-style', 'italic');
     }
   });
 }
@@ -201,6 +214,11 @@ function undisplayMovie(movieID) {
   document.getElementById('movieName').innerHTML = '';
   $('#backImage').css('background-image', "");
   cy.edges().removeClass('highlighted');
+  cy.nodes().style('background-opacity', 1);
+  cy.nodes().style('font-style', 'normal');
+  if (showingPics) {
+    cy.nodes().style('background-image-opacity', 1);
+  }
   cy.edges().forEach(function(ele) {
     if (ele.id().split('.')[0] == movieID) {
       ele.source().style('content', actorLookup[ele.source().id()]);
@@ -331,7 +349,7 @@ $(document).ready(function() {
     layout: {
       name: $('input[name="layout"]:checked').val(),
       padding: 10,
-      animate:false
+      animate: false
     },
     ready: function() {}
   });
