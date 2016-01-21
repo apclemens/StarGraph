@@ -128,7 +128,6 @@ var tmdbObject = {
       }
       gotRoles[actID] = true;
       $("#addActor").val('');
-      getMovieList();
       $("#addActor").autocomplete("close");
     });
   },
@@ -253,7 +252,6 @@ function removeMovie(movieID) {
   for (var i = 0; i < toRemove.length; i++) {
     cy.getElementById(toRemove[i]).remove();
   }
-  getMovieList();
 }
 
 function addEdge(movieID, source, target) {
