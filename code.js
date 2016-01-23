@@ -228,6 +228,7 @@ var tmdbObject = {
       linkLookup[movieID].none = '';
       linkLookup[movieID].website = data.homepage;
       linkLookup[movieID].wiki = 'http://www.google.com/search?q=site:en.wikipedia.org+'+movieLookup[movieID].replace(' ','+')+'+film&btnI';
+      linkLookup[movieID].rt = 'http://www.google.com/search?q=site:rottentomatoes.com+'+movieLookup[movieID].replace(' ','+')+'&btnI';
       linkLookup[movieID].imdb = 'http://www.imdb.com/title/' + data.imdb_id;
       linkLookup[movieID].tmdb = 'https://www.themoviedb.org/movie/' + movieID;
       console.log(data.homepage);
