@@ -1,4 +1,3 @@
-
 <DOCTYPE html>
 <html>
    <head>
@@ -34,6 +33,16 @@
          <div id="movieName"></div>
          <input type="text" name="search" id="addActor" class="float input" style="top:15px; left:15px" onkeyup="tmdbObject.getSugg(event.keyCode, this.value)" placeholder="Add an actor" />
          <div id="movieList" class="float" style="top:60px; left:15px"></div>
+         <label style="bottom:255px;left:30px" class="float">
+            Link to 
+            <select id='link'>
+               <option value="none">None</option>
+               <option value="website">Movie's website</option>
+               <option value="wiki">Wikipedia</option>
+               <option value="imdb">IMDb</option>
+               <option value="tmdb">The Movie Database</option>
+            </select>
+         </label>
          <label style="bottom:225px;left:30px" class="float check">
          <input type="checkbox" id="crew" tabindex=-1 onclick="includeCrew=!includeCrew;changeCrew()"> Include crew </label>
          <label style="bottom:195px;left:30px" class="float check">
