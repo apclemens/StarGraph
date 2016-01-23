@@ -227,7 +227,7 @@ var tmdbObject = {
       linkLookup[movieID] = {};
       linkLookup[movieID].none = '';
       linkLookup[movieID].website = data.homepage;
-      linkLookup[movieID].wiki = 'https://en.wikipedia.org/w/index.php?title=Special%3ASearch&profile=default&search=' + movieLookup[movieID] + '+film&fulltext=Search';
+      linkLookup[movieID].wiki = 'http://www.google.com/search?q=site:en.wikipedia.org+'+movieLookup[movieID].replace(' ','+')+'+film&btnI';
       linkLookup[movieID].imdb = 'http://www.imdb.com/title/' + data.imdb_id;
       linkLookup[movieID].tmdb = 'https://www.themoviedb.org/movie/' + movieID;
       console.log(data.homepage);
