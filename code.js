@@ -4,9 +4,12 @@ var movieLookup = {};
 var roleLookup = {};
 var posterLookup = {};
 var picLookup = {};
+var crewLookup = {};
 var gotRoles = {};
 var suggs = [];
 var avoidingMovies = [];
+var crewEdges = [];
+var includeCrew;
 var showingPics;
 var redraw;
 var cy;
@@ -84,6 +87,7 @@ var tmdbObject = {
     this.get_data("http://api.themoviedb.org/3/person/" + String(actID) + "/movie_credits?api_key=" + this.api_key, function(xmlhttp) {
       var pos = centerOfGraph();
       eval("var actorRoles = " + xmlhttp.responseText + ".cast");
+      eval("var crewRoles = " + xmlhttp.responseText + ".crew");
       cy.add({
         group: "nodes",
         data: {
@@ -105,13 +109,17 @@ var tmdbObject = {
         if (movieCasts[movieID] === undefined) {
           movieCasts[movieID] = [actID];
           roleLookup[movieID] = {};
+          crewLookup[movieID] = {};
           roleLookup[movieID][actID] = actorRoles[i].character;
+          crewLookup[movieID][actID] = false;
         } else {
           if (roleLookup[movieID][actID] === undefined) {
             roleLookup[movieID][actID] = actorRoles[i].character;
+            crewLookup[movieID][actID] = false;
           } else {
             if (gotRoles[actID] === undefined) {
               roleLookup[movieID][actID] += " / " + actorRoles[i].character;
+              crewLookup[movieID][actID] = false;
             }
           }
           posterLookup[movieID] = actorRoles[i].poster_path;
@@ -121,11 +129,47 @@ var tmdbObject = {
             movieLookup[movieID] = movieName;
             if (actID !== movieCasts[movieID][j] && avoidingMovies.indexOf(String(movieID)) == -1) {
               addEdge(movieID, actID, movieCasts[movieID][j]);
+              if (crewLookup[movieID][actID] || crewLookup[movieID][movieCasts[movieID][j]]) {
+                crewEdges[crewEdges.length] = cy.getElementById(movieID + '.' + Math.min(actID, movieCasts[movieID][j]) + '.' + Math.max(actID, movieCasts[movieID][j]));
+              }
             }
           }
           movieCasts[movieID][numLines] = actID;
         }
       }
+      for (var i = 0; i < crewRoles.length; i++) {
+        var movieID = crewRoles[i].id;
+        if (movieCasts[movieID] === undefined) {
+          movieCasts[movieID] = [actID];
+          roleLookup[movieID] = {};
+          crewLookup[movieID] = {};
+          roleLookup[movieID][actID] = "crew: " + crewRoles[i].job;
+          crewLookup[movieID][actID] = true;
+        } else {
+          if (roleLookup[movieID][actID] === undefined) {
+            roleLookup[movieID][actID] = "crew: " + crewRoles[i].job;
+            crewLookup[movieID][actID] = true;
+          } else {
+            if (gotRoles[actID] === undefined) {
+              roleLookup[movieID][actID] += " / " + "crew: " + crewRoles[i].job;
+            }
+          }
+          posterLookup[movieID] = crewRoles[i].poster_path;
+          var numLines = movieCasts[movieID].length;
+          var movieName = crewRoles[i].title + " (" + getYear(crewRoles[i].release_date) + ")";
+          for (var j = 0; j < numLines; j++) {
+            movieLookup[movieID] = movieName;
+            if (actID !== movieCasts[movieID][j] && avoidingMovies.indexOf(String(movieID)) == -1) {
+              addEdge(movieID, actID, movieCasts[movieID][j]);
+              if (crewLookup[movieID][actID] || crewLookup[movieID][movieCasts[movieID][j]]) {
+                crewEdges[crewEdges.length] = cy.getElementById(movieID + '.' + Math.min(actID, movieCasts[movieID][j]) + '.' + Math.max(actID, movieCasts[movieID][j]));
+              }
+            }
+          }
+          movieCasts[movieID][numLines] = actID;
+        }
+      }
+      changeCrew();
       gotRoles[actID] = true;
       $("#addActor").val('');
       $("#addActor").autocomplete("close");
@@ -173,12 +217,41 @@ var tmdbObject = {
   }
 };
 
+function changeCrew() {
+  if (includeCrew) {
+    for (var i = 0; i < crewEdges.length; i++) {
+      if (avoidingMovies.indexOf(crewEdges[i].id().split('.')[0]) == -1) {
+        crewEdges[i].restore()
+      }
+    }
+  } else {
+    for (var i = 0; i < crewEdges.length; i++) {
+      crewEdges[i].remove()
+    }
+  }
+}
+
 function redrawGraph() {
   cy.layout({
     name: $('input[name="layout"]:checked').val(),
     animate: false,
     padding: 10
   });
+}
+
+function correctRoleDisplay(role) {
+  if (includeCrew) {
+    return role
+  } else {
+    var roles = role.split(' / ')
+    var newRoles = []
+    for (var i = 0; i < roles.length; i++) {
+      if (roles[i].substring(0, 6) !== 'crew: ') {
+        newRoles[newRoles.length] = roles[i]
+      }
+    }
+  }
+  return newRoles.join(' / ')
 }
 
 function displayMovie(movieID, showName) {
@@ -191,8 +264,8 @@ function displayMovie(movieID, showName) {
   cy.edges().forEach(function(ele) {
     if (ele.id().split('.')[0] == movieID) {
       ele.addClass('highlighted');
-      ele.source().style('content', roleLookup[movieID][ele.source().id()]);
-      ele.target().style('content', roleLookup[movieID][ele.target().id()]);
+      ele.source().style('content', correctRoleDisplay(roleLookup[movieID][ele.source().id()]));
+      ele.target().style('content', correctRoleDisplay(roleLookup[movieID][ele.target().id()]));
       changedNodes[changedNodes.length] = ele.source().id();
       changedNodes[changedNodes.length] = ele.target().id();
     }
@@ -316,6 +389,7 @@ function zoom(v) {
 $(document).ready(function() {
   showingPics = document.getElementById("showPics").checked;
   redraw = document.getElementById("redraw").checked;
+  includeCrew = document.getElementById("crew").checked;
 
   cy = cytoscape({
     container: document.getElementById('cy'),
