@@ -104,8 +104,12 @@ var tmdbObject = {
       } else {
         cy.$('#' + String(actID)).position(pos);
       }
+      var movieID;
+      var numLines;
+      var movieName;
+      var j;
       for (var i = 0; i < actorRoles.length; i++) {
-        var movieID = actorRoles[i].id;
+        movieID = actorRoles[i].id;
         if (movieCasts[movieID] === undefined) {
           movieCasts[movieID] = [actID];
           roleLookup[movieID] = {};
@@ -123,9 +127,9 @@ var tmdbObject = {
             }
           }
           posterLookup[movieID] = actorRoles[i].poster_path;
-          var numLines = movieCasts[movieID].length;
-          var movieName = actorRoles[i].title + " (" + getYear(actorRoles[i].release_date) + ")";
-          for (var j = 0; j < numLines; j++) {
+          numLines = movieCasts[movieID].length;
+          movieName = actorRoles[i].title + " (" + getYear(actorRoles[i].release_date) + ")";
+          for (j = 0; j < numLines; j++) {
             movieLookup[movieID] = movieName;
             if (actID !== movieCasts[movieID][j] && avoidingMovies.indexOf(String(movieID)) == -1) {
               addEdge(movieID, actID, movieCasts[movieID][j]);
@@ -137,8 +141,8 @@ var tmdbObject = {
           movieCasts[movieID][numLines] = actID;
         }
       }
-      for (var i = 0; i < crewRoles.length; i++) {
-        var movieID = crewRoles[i].id;
+      for (i = 0; i < crewRoles.length; i++) {
+        movieID = crewRoles[i].id;
         if (movieCasts[movieID] === undefined) {
           movieCasts[movieID] = [actID];
           roleLookup[movieID] = {};
@@ -155,9 +159,9 @@ var tmdbObject = {
             }
           }
           posterLookup[movieID] = crewRoles[i].poster_path;
-          var numLines = movieCasts[movieID].length;
-          var movieName = crewRoles[i].title + " (" + getYear(crewRoles[i].release_date) + ")";
-          for (var j = 0; j < numLines; j++) {
+          numLines = movieCasts[movieID].length;
+          movieName = crewRoles[i].title + " (" + getYear(crewRoles[i].release_date) + ")";
+          for (j = 0; j < numLines; j++) {
             movieLookup[movieID] = movieName;
             if (actID !== movieCasts[movieID][j] && avoidingMovies.indexOf(String(movieID)) == -1) {
               addEdge(movieID, actID, movieCasts[movieID][j]);
@@ -218,15 +222,16 @@ var tmdbObject = {
 };
 
 function changeCrew() {
+  var i;
   if (includeCrew) {
-    for (var i = 0; i < crewEdges.length; i++) {
+    for (i = 0; i < crewEdges.length; i++) {
       if (avoidingMovies.indexOf(crewEdges[i].id().split('.')[0]) == -1) {
-        crewEdges[i].restore()
+        crewEdges[i].restore();
       }
     }
   } else {
-    for (var i = 0; i < crewEdges.length; i++) {
-      crewEdges[i].remove()
+    for (i = 0; i < crewEdges.length; i++) {
+      crewEdges[i].remove();
     }
   }
 }
@@ -241,17 +246,17 @@ function redrawGraph() {
 
 function correctRoleDisplay(role) {
   if (includeCrew) {
-    return role
+    return role;
   } else {
-    var roles = role.split(' / ')
-    var newRoles = []
+    var roles = role.split(' / ');
+    var newRoles = [];
     for (var i = 0; i < roles.length; i++) {
       if (roles[i].substring(0, 6) !== 'crew: ') {
-        newRoles[newRoles.length] = roles[i]
+        newRoles[newRoles.length] = roles[i];
       }
     }
+    return newRoles.join(' / ');
   }
-  return newRoles.join(' / ')
 }
 
 function displayMovie(movieID, showName) {
