@@ -264,8 +264,8 @@ function displayMovie(movieID, showName) {
   cy.edges().forEach(function(ele) {
     if (ele.id().split('.')[0] == movieID) {
       ele.addClass('highlighted');
-      ele.source().style('content', correctRoleDisplay(roleLookup[movieID][ele.source().id()]));
-      ele.target().style('content', correctRoleDisplay(roleLookup[movieID][ele.target().id()]));
+      ele.source().style('content', roleLookup[movieID][ele.source().id()]);
+      ele.target().style('content', roleLookup[movieID][ele.target().id()]);
       changedNodes[changedNodes.length] = ele.source().id();
       changedNodes[changedNodes.length] = ele.target().id();
     }
