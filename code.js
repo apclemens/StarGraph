@@ -14,6 +14,7 @@ var includeCrew;
 var showingPics;
 var redraw;
 var cy;
+var linkLookup = {};
 
 function getMovieList() {
   var movieTally = {};
@@ -219,6 +220,18 @@ var tmdbObject = {
         });
       }
     }
+  },
+  getMovieLinks: function(movieID) {
+    this.get_data("http://api.themoviedb.org/3/movie/" + movieID + "?api_key=" + this.api_key, function(xmlhttp) {
+      eval('var data = ' + xmlhttp.responseText);
+      linkLookup[movieID] = {};
+      linkLookup[movieID].none = '';
+      linkLookup[movieID].website = data.homepage;
+      linkLookup[movieID].wiki = 'https://en.wikipedia.org/w/index.php?title=Special%3ASearch&profile=default&search=' + movieLookup[movieID] + '+film&fulltext=Search';
+      linkLookup[movieID].imdb = 'http://www.imdb.com/title/' + data.imdb_id;
+      linkLookup[movieID].tmdb = 'https://www.themoviedb.org/movie/' + movieID;
+      console.log(data.homepage);
+    });
   }
 };
 
@@ -264,6 +277,9 @@ function correctRoleDisplay(role) {
 }
 
 function displayMovie(movieID, showName) {
+  if (linkLookup[movieID] === undefined) {
+    tmdbObject.getMovieLinks(movieID);
+  }
   $('#backImage').css('background-image', "url('" + "https://image.tmdb.org/t/p/w396/" + posterLookup[movieID] + "')");
   var title = movieLookup[movieID];
   var changedNodes = [];
@@ -388,6 +404,15 @@ function centerOfGraph() {
   }
 }
 
+function openLink(id) {
+  var link = document.getElementById("link").value;
+  var url = linkLookup[id][link];
+  if (url !== '') {
+    var win = window.open(linkLookup[id][link], '_blank');
+    win.focus();
+  }
+}
+
 function zoom(v) {
   cy.zoom({
     level: Number(v),
@@ -455,6 +480,9 @@ $(document).ready(function() {
   });
   cy.on('cxttap', 'edge', function(evt) {
     removeMovie(evt.cyTarget.id().split('.')[0]);
+  });
+  cy.on('tap', 'edge', function(evt) {
+    openLink(evt.cyTarget.id().split('.')[0]);
   });
   cy.on('mouseover', 'edge', function(evt) {
     displayMovie(evt.cyTarget.id().split('.')[0], true);
