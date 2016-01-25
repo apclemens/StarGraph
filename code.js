@@ -224,11 +224,12 @@ var tmdbObject = {
   getMovieLinks: function(movieID) {
     this.get_data("http://api.themoviedb.org/3/movie/" + movieID + "?api_key=" + this.api_key, function(xmlhttp) {
       eval('var data = ' + xmlhttp.responseText);
+      var movieName = movieLookup[movieID].replace('&','and');
       linkLookup[movieID] = {};
       linkLookup[movieID].none = '';
       linkLookup[movieID].website = data.homepage;
-      linkLookup[movieID].wiki = 'http://www.google.com/search?q=site:en.wikipedia.org+'+movieLookup[movieID].replace(' ','+')+'+film&btnI';
-      linkLookup[movieID].rt = 'http://www.google.com/search?q=site:rottentomatoes.com+'+movieLookup[movieID].replace(' ','+')+'&btnI';
+      linkLookup[movieID].wiki = 'http://www.google.com/search?q=site:en.wikipedia.org+'+movieName.replace(' ','+')+'+film&btnI';
+      linkLookup[movieID].rt = 'http://www.google.com/search?q=site:rottentomatoes.com+'+movieName.replace(' ','+')+'&btnI';
       linkLookup[movieID].imdb = 'http://www.imdb.com/title/' + data.imdb_id;
       linkLookup[movieID].tmdb = 'https://www.themoviedb.org/movie/' + movieID;
       console.log(data.homepage);
