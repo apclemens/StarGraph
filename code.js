@@ -238,6 +238,7 @@ var tmdbObject = {
 };
 
 function changeCrew() {
+  includeCrew = document.getElementById("crew").checked;
   var i;
   if (includeCrew) {
     for (i = 0; i < crewEdges.length; i++) {
