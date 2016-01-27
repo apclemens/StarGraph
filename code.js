@@ -82,12 +82,12 @@ var tmdbObject = {
       picLookup[actID] = info.profile_path;
     });
   },
-  addActor: function(actID) {
+  addActor: function(actID, pos={}, redraw2=redraw) {
     if (actorLookup[actID] === undefined) {
       this.getName(actID);
     }
     this.get_data("http://api.themoviedb.org/3/person/" + String(actID) + "/movie_credits?api_key=" + this.api_key, function(xmlhttp) {
-      var pos = centerOfGraph();
+      if(pos=={}){pos = centerOfGraph()};
       eval("var actorRoles = " + xmlhttp.responseText + ".cast");
       eval("var crewRoles = " + xmlhttp.responseText + ".crew");
       cy.add({
@@ -101,7 +101,7 @@ var tmdbObject = {
       if (showingPics) {
         cy.$('#' + String(actID)).addClass('picture');
       }
-      if (redraw) {
+      if (redraw2) {
         redrawGraph();
       } else {
         cy.$('#' + String(actID)).position(pos);
@@ -178,7 +178,6 @@ var tmdbObject = {
       changeCrew();
       gotRoles[actID] = true;
       $("#addActor").val('');
-      $("#addActor").autocomplete("close");
     });
   },
   getSugg: function(key, query) {
@@ -232,7 +231,6 @@ var tmdbObject = {
       linkLookup[movieID].rt = 'http://www.google.com/search?q=site:rottentomatoes.com+'+movieName.replace(' ','+')+'&btnI';
       linkLookup[movieID].imdb = 'http://www.imdb.com/title/' + data.imdb_id;
       linkLookup[movieID].tmdb = 'https://www.themoviedb.org/movie/' + movieID;
-      console.log(data.homepage);
     });
   }
 };
@@ -327,8 +325,8 @@ function undisplayMovie(movieID) {
   });
 }
 
-function changePictures(cb) {
-  if (cb.checked) {
+function changePictures() {
+  if (document.getElementById('showPics').checked) {
     cy.nodes().forEach(function(ele) {
       ele.addClass('picture');
     });
@@ -494,3 +492,91 @@ $(document).ready(function() {
     undisplayMovie(evt.cyTarget.id().split('.')[0]);
   });
 });
+
+function baseToDec(string, b1) {
+  //first change from b1 to decimal
+  var n = string.length;
+  var b = b1.length;
+  var s = 0;
+  for(var i=0;i<string.length;i++) {
+    n -= 1;
+	s += b1.indexOf(string[i])*Math.pow(b,n);
+  }
+  return s;
+}
+
+var B1 = '0123456789-.;';
+var B2 = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","0","1","2","3","4","5","6","7","8","9","!","@","#","$","%","^","&","(",")","~","`",";",":","'",",",".","?","[","]","{","}","|","-","=","_","+","*a","*b","*c","*d","*e","*f","*g","*h","*i","*j","*k","*l","*m","*n","*o","*p","*q","*r","*s","*t","*u","*v","*w","*x","*y","*z","*A","*B","*C","*D","*E","*F","*G","*H","*I","*J","*K","*L","*M","*N","*O","*P","*Q","*R","*S","*T","*U","*V","*W","*X","*Y","*Z","*0","*1","*2","*3","*4","*5","*6","*7","*8","*9","*!","*@","*#","*$","*%","*^","*&","*(","*)","*_","*+","*-","*=","*<","*>","*,","*.","*:","*;"];
+
+function encryptCode(code) {
+  if(code.length%2==1) {
+    code += ';';
+  }
+  var ret = '';
+  for(var i=0;i<code.length;i+=2) {
+    ret += B2[B1.indexOf(code[i])*13 + B1.indexOf(code[i+1])];
+  }
+  return ret;
+}
+
+function decryptCode(code) {
+  var ret = '';
+  var piece;
+  while(code.length !== 0) {
+    piece = code[0];
+	code = code.substring(1,code.length);
+	if(piece=='*'){piece += code[0];code = code.substring(1,code.length);}
+	num = B2.indexOf(piece);
+	a = Math.floor(num/13);
+	b = num%13;
+	ret += B1[a]+B1[b];
+  }
+  return ret;
+}
+
+function getCode() {
+  //info we want:
+  //including crew?
+  //showing pictures?
+  //pan
+  //zoom
+  //all ids
+  //all positions
+  //avoiding movies
+  var codeComponents = [''];
+  if(showingPics) {codeComponents[0] += '1';} else {codeComponents[0]+='0';}
+  if(includeCrew) {codeComponents[0] += '1';} else {codeComponents[0]+='0';}
+  codeComponents[codeComponents.length]=cy.zoom();
+  codeComponents[codeComponents.length]=cy.pan('x');
+  codeComponents[codeComponents.length]=cy.pan('y');
+  codeComponents[codeComponents.length]=cy.nodes().length;
+  for(var i=0;i<cy.nodes().length;i++) {
+    codeComponents[codeComponents.length] = cy.nodes()[i].id();
+    codeComponents[codeComponents.length] = cy.nodes()[i].position('x');
+    codeComponents[codeComponents.length] = cy.nodes()[i].position('y');
+  }
+  for(i=0;i<avoidingMovies.length;i++) {
+    codeComponents[codeComponents.length] = avoidingMovies[i];
+  }
+  return encryptCode(codeComponents.join(';'));
+}
+
+function placeCode(code) {
+  var components = decryptCode(code).split(';');
+  if(components[0][0]=='1'){document.getElementById("showPics").checked=true;} else {document.getElementById("showPics").checked=false;}
+  if(components[0][1]=='1'){document.getElementById("crew").checked=true;} else {document.getElementById("crew").checked=false;}
+  
+  cy.zoom(Number(components[1]));
+  cy.pan({x:Number(components[2]),y:Number(components[3])});
+  
+  for(var i=5;i<3*Number(components[4])+5;i+=3) {
+    tmdbObject.getName(components[i]);
+	console.log(components[i]);
+  }
+  for(var i=5;i<3*Number(components[4])+5;i+=3) {
+    tmdbObject.addActor(components[i], {x:Number(components[i+1]), y:Number(components[i+2])}, false);
+  }
+  for(i=3*Number(components[4])+5;i<components.length;i++) {
+    removeMovie(components[i]);
+  }
+}
