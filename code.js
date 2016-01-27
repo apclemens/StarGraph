@@ -177,12 +177,12 @@ var tmdbObject = {
       }
       changeCrew();
       gotRoles[actID] = true;
-      $("#addActor").autocomplete('close').val('');
     });
   },
   getSugg: function(key, query) {
     if (key == 13) {
       this.addName(query);
+      $("#addActor").autocomplete('close').val('');
     } else {
       if (query !== "") {
         this.get_data("http://api.themoviedb.org/3/search/person?query=" + query + "&api_key=" + this.api_key, function(xmlhttp) {
