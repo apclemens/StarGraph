@@ -50,7 +50,7 @@
          <label style="bottom:195px;left:30px" class="float check">
          <input type="checkbox" id="redraw" tabindex=-1 onclick="redraw = !redraw" checked> Redraw graph after change </label>
          <label style="bottom:165px;left:30px" class="float check">
-         <input type="checkbox" id="showPics" onclick="changePictures(this)" tabindex=-1> Show pictures </label>
+         <input type="checkbox" id="showPics" onclick="changePictures()" tabindex=-1> Show pictures </label>
          <button class="float control" style="bottom: 135px; left: 45px" onclick="cy.fit()" tabindex=-1>Fit to screen</button>
          <button class="float control" style="bottom: 105px; left: 45px" onclick="cy.layout({name: $('input[name=\'layout\']:checked').val(),animate:false,padding:10});" tabindex=-1>Redraw</button>
          <button class="float control" style="bottom: 75px; left: 45px" onclick="cy.center()" tabindex=-1>Center graph</button>
