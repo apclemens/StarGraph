@@ -82,7 +82,7 @@ var tmdbObject = {
       picLookup[actID] = info.profile_path;
     });
   },
-  addActor: function(actID, pos={}, redraw2=redraw) {
+  addActor: function(actID) {
     if (actorLookup[actID] === undefined) {
       this.getName(actID);
     }
