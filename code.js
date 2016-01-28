@@ -101,7 +101,7 @@ var tmdbObject = {
       if (showingPics) {
         cy.$('#' + String(actID)).addClass('picture');
       }
-      if (redraw2) {
+      if (redraw) {
         redrawGraph();
       } else {
         cy.$('#' + String(actID)).position(pos);
