@@ -87,7 +87,7 @@ var tmdbObject = {
       this.getName(actID);
     }
     this.get_data("http://api.themoviedb.org/3/person/" + String(actID) + "/movie_credits?api_key=" + this.api_key, function(xmlhttp) {
-      if(pos=={}){pos = centerOfGraph();}
+      var pos = centerOfGraph();
       eval("var actorRoles = " + xmlhttp.responseText + ".cast");
       eval("var crewRoles = " + xmlhttp.responseText + ".crew");
       cy.add({
