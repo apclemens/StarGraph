@@ -16,42 +16,17 @@ var redraw;
 var cy;
 var linkLookup = {};
 
-function getMovieList() {
-  var movieTally = {};
-  cy.edges().forEach(function(ele) {
-    movie = ele.id().split('.')[0];
-    if (movieTally[movie] === undefined) {
-      movieTally[movie] = 0;
-    }
-    movieTally[movie]++;
-  });
-  var movies = Object.keys(movieTally).map(function(key) {
-    return [key, movieTally[key]];
-  });
-  // Sort the array based on the second element
-  movies.sort(function(first, second) {
-    return second[1] - first[1];
-  });
-  var toDisplay = '';
-  for (var i = 0; i < movies.length; i++) {
-    movie = movieLookup[movies[i][0]];
-    toDisplay += '<a>' + movie + ' - ' + String((1 + Math.sqrt(1 + 8 * movies[i][1])) / 2) + '</a></br>';
-  }
-  if (avoidingMovies.length > 0) {
-    avoidingMovies.sort();
-    toDisplay += '</br><b>Deleted movies:</b></br>';
-    for (i = 0; i < avoidingMovies.length; i++) {
-      toDisplay += '<a onclick="restoreMovie(' + avoidingMovies[i] + ')">' + movieLookup[avoidingMovies[i]] + '</a></br>';
-    }
-  }
-  document.getElementById('list').innerHTML = toDisplay;
-}
-
 function getYear(release_date) {
   if (release_date == null) {
     return "";
   } else {
     return release_date.substring(0, 4);
+  }
+}
+
+function restoreMovies() {
+  for(var i=0;i<avoidingMovies.length;i++) {
+    restoreMovie(avoidingMovies[i]);
   }
 }
 
