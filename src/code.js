@@ -28,6 +28,7 @@ function restoreMovies() {
   for(var i=0;i<avoidingMovies.length;i++) {
     restoreMovie(avoidingMovies[i]);
   }
+  updateURL();
 }
 
 var tmdbObject = {
@@ -153,6 +154,7 @@ var tmdbObject = {
       changeCrew();
       gotRoles[actID] = true;
       $("#addActor").val('');
+	  updateURL();
     });
   },
   getSugg: function(key, query) {
@@ -327,6 +329,7 @@ function removeMovie(movieID) {
   for (var i = 0; i < toRemove.length; i++) {
     cy.getElementById(toRemove[i]).remove();
   }
+  updateURL();
 }
 
 function addEdge(movieID, source, target) {
@@ -438,6 +441,10 @@ $(document).ready(function() {
   });
   cy.on('zoom', function() {
     document.getElementById("zoom").value = cy.zoom();
+	updateURL()
+  });
+  cy.on('tapend', function() {
+	updateURL()
   });
   document.oncontextmenu = function() {
     return false;
@@ -455,6 +462,7 @@ $(document).ready(function() {
       redrawGraph();
     }
   });
+  cy.on('tapend', 'node', function(evt) {updateURL();})
   cy.on('cxttap', 'edge', function(evt) {
     removeMovie(evt.cyTarget.id().split('.')[0]);
   });
@@ -467,9 +475,22 @@ $(document).ready(function() {
   cy.on('mouseout', 'edge', function(evt) {
     undisplayMovie(evt.cyTarget.id().split('.')[0]);
   });
+  
+  var url = window.location.href;
+  var urlStart=url.indexOf("?c=")+3;
+  if(urlStart!==2){
+  var code = url.slice(url.indexOf("?c=")+3,url.length);
+  placeCode(code);}
 });
 
+function updateURL() {
+  var code = getCode();
+  var url = window.location.href.split('?')[0]+code;
+  history.pushState('data', '', url);
+}
+
 function getCode() {
+  if(cy.nodes().length===0){return '';}
   var codeComponents = [''];
   if(showingPics) {codeComponents[0] += '1';} else {codeComponents[0]+='0';}
   if(includeCrew) {codeComponents[0] += '1';} else {codeComponents[0]+='0';}
@@ -485,7 +506,7 @@ function getCode() {
   for(i=0;i<avoidingMovies.length;i++) {
     codeComponents[codeComponents.length] = avoidingMovies[i];
   }
-  return codeComponents.join(';');
+  return '?c='+codeComponents.join(';');
 }
 
 function placeCode(code) {
