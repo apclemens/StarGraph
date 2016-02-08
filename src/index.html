@@ -1,4 +1,4 @@
-<DOCTYPE html>
+<!DOCTYPE html>
 <html>
    <head>
       <link href="style.css" rel="stylesheet" />
@@ -26,11 +26,9 @@
       <link rel="shortcut icon" href="https://dl.dropboxusercontent.com/s/jiqn23ihoelt7qd/favicon.ico" />
    </head>
    <body>
-      <div class="ui very wide sidebar right" id="list"></div>
-      <div class="pusher">
+         <div id="cy"></div>
          <div id="backImage"></div>
          <div id="attribute"></div>
-         <div id="cy"></div>
          <div id="movieName"></div>
          <input type="text" name="search" id="addActor" class="float input" style="top:15px; left:15px" onkeyup="tmdbObject.getSugg(event.keyCode, this.value)" placeholder="Add an actor" />
          <div id="movieList" class="float" style="top:60px; left:15px"></div>
@@ -65,7 +63,7 @@
                   </p>
                   <p>Star Graph is a site that creates <a target="_blank" href="https://en.wikipedia.org/wiki/Co-stardom_network">co-stardom networks</a> between film actors.</p>
                   <p>Add an actor by typing his or her name in the top left field. Remove an actor by right-clicking his or her node.</p>
-                  <p>You can also remove all instances of a movie by right clicking any of its edges. Add the movie back by opening the sidebar on the right and clicking on that movie's name.</p>
+                  <p>You can also remove all instances of a movie by right clicking any of its edges. Currently there's no way to add it back but that will happen.</p>
                   <p>The site uses <a target="_blank" href="https://jquery.com/">jQuery</a> and <a target="_blank" href="http://js.cytoscape.org/">Cytoscape.js</a> to create the graph.  The sidebar comes from <a target="_blank" href="http://semantic-ui.com/modules/sidebar.html">Semantic UI</a>.</p>
                   <p>All data and images come from <a target="_blank" href="https://www.themoviedb.org/">The Movie Database</a>.</p>
                   <p>Contact <a href="mailto:stargraphio@gmail.com">stargraphio@gmail.com</a> with questions, comments, suggestions, or if you just want to chat.</p>
@@ -73,7 +71,5 @@
             </div>
          </div>
          <a href="javascript:void(0)" class="float" id="show_about" onclick="$('.popUpBannerBox').fadeIn('2000');" style="bottom:15px;right:15px;color:black" tabindex=-1>about</a>
-         <button id="list" class="float control" style="top:50%;right:15px" onclick="getMovieList();$('.ui.sidebar').sidebar('toggle');"><</button>
-      </div>
-   </body>
+  </body>
 </html>
