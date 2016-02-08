@@ -57,12 +57,12 @@ var tmdbObject = {
       picLookup[actID] = info.profile_path;
     });
   },
-  addActor: function(actID) {
+  addActor: function(actID, pos={}, redraw2=redraw) {
     if (actorLookup[actID] === undefined) {
       this.getName(actID);
     }
     this.get_data("http://api.themoviedb.org/3/person/" + String(actID) + "/movie_credits?api_key=" + this.api_key, function(xmlhttp) {
-      var pos = centerOfGraph();
+      if(pos=={}){pos = centerOfGraph()};
       eval("var actorRoles = " + xmlhttp.responseText + ".cast");
       eval("var crewRoles = " + xmlhttp.responseText + ".crew");
       cy.add({
@@ -76,7 +76,7 @@ var tmdbObject = {
       if (showingPics) {
         cy.$('#' + String(actID)).addClass('picture');
       }
-      if (redraw) {
+      if (redraw2) {
         redrawGraph();
       } else {
         cy.$('#' + String(actID)).position(pos);
@@ -152,6 +152,7 @@ var tmdbObject = {
       }
       changeCrew();
       gotRoles[actID] = true;
+      $("#addActor").val('');
     });
   },
   getSugg: function(key, query) {
@@ -467,3 +468,41 @@ $(document).ready(function() {
     undisplayMovie(evt.cyTarget.id().split('.')[0]);
   });
 });
+
+function getCode() {
+  var codeComponents = [''];
+  if(showingPics) {codeComponents[0] += '1';} else {codeComponents[0]+='0';}
+  if(includeCrew) {codeComponents[0] += '1';} else {codeComponents[0]+='0';}
+  codeComponents[codeComponents.length]=cy.zoom();
+  codeComponents[codeComponents.length]=cy.pan('x');
+  codeComponents[codeComponents.length]=cy.pan('y');
+  codeComponents[codeComponents.length]=cy.nodes().length;
+  for(var i=0;i<cy.nodes().length;i++) {
+    codeComponents[codeComponents.length] = cy.nodes()[i].id();
+    codeComponents[codeComponents.length] = cy.nodes()[i].position('x');
+    codeComponents[codeComponents.length] = cy.nodes()[i].position('y');
+  }
+  for(i=0;i<avoidingMovies.length;i++) {
+    codeComponents[codeComponents.length] = avoidingMovies[i];
+  }
+  return codeComponents.join(';');
+}
+
+function placeCode(code) {
+  var components = code.split(';');
+  if(components[0][0]=='1'){document.getElementById("showPics").checked=true;} else {document.getElementById("showPics").checked=false;}
+  if(components[0][1]=='1'){document.getElementById("crew").checked=true;} else {document.getElementById("crew").checked=false;}
+  
+  cy.zoom(Number(components[1]));
+  cy.pan({x:Number(components[2]),y:Number(components[3])});
+  
+  for(var i=5;i<3*Number(components[4])+5;i+=3) {
+    tmdbObject.getName(components[i]);
+  }
+  for(var i=5;i<3*Number(components[4])+5;i+=3) {
+    tmdbObject.addActor(components[i], {x:Number(components[i+1]), y:Number(components[i+2])}, false);
+  }
+  for(i=3*Number(components[4])+5;i<components.length;i++) {
+    removeMovie(components[i]);
+  }
+}
