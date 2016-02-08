@@ -462,6 +462,8 @@ $(document).ready(function() {
     cy.$('#' + evt.cyTarget.id()).remove();
     if (redraw) {
       redrawGraph();
+    } else {
+      updateURL();
     }
   });
   cy.on('tapend', 'node', function(evt) {updateURL();});
