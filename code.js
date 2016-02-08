@@ -227,6 +227,7 @@ function changeCrew() {
       cy.getElementById(crewEdges[i]).remove();
     }
   }
+  updateURL();
 }
 
 function redrawGraph() {
@@ -315,6 +316,7 @@ function changePictures() {
     });
     showingPics = false;
   }
+  updateURL();
 }
 
 function removeMovie(movieID) {
