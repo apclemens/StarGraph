@@ -462,9 +462,8 @@ $(document).ready(function() {
     cy.$('#' + evt.cyTarget.id()).remove();
     if (redraw) {
       redrawGraph();
-    } else {
-      updateURL();
     }
+      updateURL();
   });
   cy.on('tapend', 'node', function(evt) {updateURL();});
   cy.on('cxttap', 'edge', function(evt) {
