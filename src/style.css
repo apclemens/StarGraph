@@ -12,6 +12,9 @@ a:active {
 }
 body {
     font: 16px "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+    height: 100%;
+    margin: 0;
+    position: relative;
 }
 #backImage {
     background-color: grey;
