@@ -48,7 +48,7 @@ var tmdbObject = {
       eval("var data = " + xmlhttp.responseText + ".results[0]");
       actorLookup[data.id] = data.name;
       picLookup[data.id] = data.profile_path;
-      tmdbObject.addActor(data.id);
+      tmdbObject.addActor(data.id, {}, redraw);
     });
   },
   getName: function(actID) {
@@ -58,12 +58,12 @@ var tmdbObject = {
       picLookup[actID] = info.profile_path;
     });
   },
-  addActor: function(actID, pos={}, redraw2=redraw) {
+  addActor: function(actID, pos, redraw2) {
     if (actorLookup[actID] === undefined) {
       this.getName(actID);
     }
     this.get_data("http://api.themoviedb.org/3/person/" + String(actID) + "/movie_credits?api_key=" + this.api_key, function(xmlhttp) {
-      if(pos=={}){pos = centerOfGraph()};
+      if(pos=={}){pos = centerOfGraph();}
       eval("var actorRoles = " + xmlhttp.responseText + ".cast");
       eval("var crewRoles = " + xmlhttp.responseText + ".crew");
       cy.add({
@@ -180,7 +180,7 @@ var tmdbObject = {
               response(suggs);
             },
             select: function(event, ui) {
-              tmdbObject.addActor(ui.item.data);
+              tmdbObject.addActor(ui.item.data, {}, redraw);
             }
           }).data("ui-autocomplete")._renderItem = function(ul, item) {
             var imgURL;
@@ -443,10 +443,10 @@ $(document).ready(function() {
   });
   cy.on('zoom', function() {
     document.getElementById("zoom").value = cy.zoom();
-	updateURL()
+	updateURL();
   });
   cy.on('tapend', function() {
-	updateURL()
+	updateURL();
   });
   document.oncontextmenu = function() {
     return false;
@@ -463,8 +463,9 @@ $(document).ready(function() {
     if (redraw) {
       redrawGraph();
     }
+      updateURL();
   });
-  cy.on('tapend', 'node', function(evt) {updateURL();})
+  cy.on('tapend', 'node', function(evt) {updateURL();});
   cy.on('cxttap', 'edge', function(evt) {
     removeMovie(evt.cyTarget.id().split('.')[0]);
   });
@@ -522,7 +523,7 @@ function placeCode(code) {
   for(var i=5;i<3*Number(components[4])+5;i+=3) {
     tmdbObject.getName(components[i]);
   }
-  for(var i=5;i<3*Number(components[4])+5;i+=3) {
+  for(i=5;i<3*Number(components[4])+5;i+=3) {
     tmdbObject.addActor(components[i], {x:Number(components[i+1]), y:Number(components[i+2])}, false);
   }
   for(i=3*Number(components[4])+5;i<components.length;i++) {
