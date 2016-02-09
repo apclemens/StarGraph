@@ -509,11 +509,11 @@ function getCode() {
   for(i=0;i<avoidingMovies.length;i++) {
     codeComponents[codeComponents.length] = avoidingMovies[i];
   }
-  return '?c='+compress(codeComponents.join(';'));
+  return '?c='+codeComponents.join(';');
 }
 
 function placeCode(code) {
-  var components = decompress(code).split(';');
+  var components = code.split(';');
   if(components[0][0]=='1'){document.getElementById("showPics").checked=true;} else {document.getElementById("showPics").checked=false;}
   if(components[0][1]=='1'){document.getElementById("crew").checked=true;} else {document.getElementById("crew").checked=false;}
   
@@ -531,32 +531,4 @@ function placeCode(code) {
   }
   changePictures();
   changeCrew();
-}
-
-var b1 = '0123456789.-;';
-var b2 = ["a","b","c","d","e","f","g","h","I","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","0","1","2","3","4","5","6","7","8","9","!","@","#","$","%","^","&","*","(",")","-","=","_","+",";",":",",",".","<",">","~","\\","|a","|b","|c","|d","|e","|f","|g","|h","|I","|j","|k","|l","|m","|n","|o","|p","|q","|r","|s","|t","|u","|v","|w","|x","|y","|z","|A","|B","|C","|D","|E","|F","|G","|H","|I","|J","|K","|L","|M","|N","|O","|P","|Q","|R","|S","|T","|U","|V","|W","|X","|Y","|Z","|0","|1","|2","|3","|4","|5","|6","|7","|8","|9","|!","|@","|#","|$","|%","|^","|&","|*","|(","|)","|-","|=","|_","|+","|;","|:","|,","|.","|<","|>","||","|\\","|`"];
-
-function compress(code) {
-  if(code.length%2==1){code += ';';}
-  var ret = '';
-  for(var i=0;i<code.length;i+=2) {
-    var a=b1.indexOf(code[i]);
-    var b = b1.indexOf(code[i+1]);
-    ret += b2[a*13+b];
-  }
-  return ret;
-}
-
-function decompress(code) {
-  var ret = '';
-  for(var i=0;i<code.length;i++) {
-    var piece = code[i];
-    if (piece=='|'){i++;piece+=code[i];}
-    var index = b2.indexOf(piece);
-    var a = Math.floor(index/13);
-    var b = index%13;
-    ret += b1[a]+b1[b];
-  }
-  if(ret[ret.length-1]==';'){ret = ret.splice(0,ret.length-1);}
-  return ret;
 }
