@@ -16,11 +16,6 @@ var redraw;
 var cy;
 var linkLookup = {};
 
-Object.prototype.isEmpty = function() {
-    for (var prop in this) if (this.hasOwnProperty(prop)) return false;
-    return true;
-};
-
 function getYear(release_date) {
   if (release_date == null) {
     return "";
@@ -68,7 +63,7 @@ var tmdbObject = {
       this.getName(actID);
     }
     this.get_data("http://api.themoviedb.org/3/person/" + String(actID) + "/movie_credits?api_key=" + this.api_key, function(xmlhttp) {
-      if(pos.isEmpty()){pos = centerOfGraph();}
+      if(Object.keys(pos).length===0){pos = centerOfGraph();}
       eval("var actorRoles = " + xmlhttp.responseText + ".cast");
       eval("var crewRoles = " + xmlhttp.responseText + ".crew");
       cy.add({
