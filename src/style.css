@@ -63,15 +63,6 @@ label {
     padding-left: 15px;
     text-indent: -15px;
 }
-.float .check {
-    height: 13px;
-    margin: 0;
-    overflow: hidden;
-    padding: 0;
-    top: -1px;
-    vertical-align: bottom;
-    width: 13px;
-}
 .input {
     border-color: #cccccc;
     border-radius: 50px;
@@ -116,4 +107,55 @@ input[type=range][orient=vertical]
 .popUpBannerContent {
     position: fixed;
     top: 150px;
+}
+#settings-panel {
+  color: #414141;
+  background: white;
+  border: 1px solid #a9a9a9;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: 99999;
+  width: 270px;
+  height: 320px;
+  padding: 6px 8px;
+  text-align: left;
+  -webkit-box-shadow: 1px 3px 3px rgba(0,0,0,0.4);
+  -moz-box-shadow: 1px 3px 3px rgba(0,0,0,0.4);
+  box-shadow: 1px 3px 3px rgba(0,0,0,0.4);
+}
+
+
+input[type=checkbox] {
+display:none;
+}
+ 
+input[type=checkbox] + label
+{
+height: 45px;
+width: 45px;
+display:inline-block;
+padding: 0 0 0 0px;
+}
+
+
+
+
+#crew + label{
+background: url('https://dl.dropboxusercontent.com/s/ear21mu29o6wml2/crew-off.png');
+}
+#crew:checked + label{
+background: url('https://dl.dropboxusercontent.com/s/jasc0i3pv92c2nw/crew-on.png');
+}
+#redraw + label{
+background: url('https://dl.dropboxusercontent.com/s/p1zxeajxr7qqu9j/keep-layout-off.png');
+}
+#redraw:checked + label{
+background: url('https://dl.dropboxusercontent.com/s/s0kdpe27ci6f1xp/keep-layout-on.png');
+}
+#showPics + label{
+background: url('https://dl.dropboxusercontent.com/s/3qr33uu9rw1f7f5/show-pics-off.png');
+}
+#showPics:checked + label{
+background: url('https://dl.dropboxusercontent.com/s/vr0agtkqxy1r27t/show-pics-on.png');
 }
