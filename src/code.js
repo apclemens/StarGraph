@@ -66,12 +66,14 @@ var tmdbObject = {
       if(Object.keys(pos).length===0){pos = centerOfGraph();}
       eval("var actorRoles = " + xmlhttp.responseText + ".cast");
       eval("var crewRoles = " + xmlhttp.responseText + ".crew");
+      var picURL;
+      if(picLookup[actID]===null){picURL='https://assets.tmdb.org/assets/91c0541cff7ec4947514edd379f0ffd1/images/no-profile-w185.jpg';} else {picURL='https://image.tmdb.org/t/p/w396' + picLookup[actID];}
       cy.add({
         group: "nodes",
         data: {
           id: actID,
           name: actorLookup[actID],
-          img: 'https://image.tmdb.org/t/p/w396' + picLookup[actID],
+          img: picURL,
         }
       });
       if (showingPics) {
