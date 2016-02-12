@@ -4,8 +4,8 @@
       <link href="style.css" rel="stylesheet" />
       <meta charset=utf-8 />
       <title>Star Graph</title>
-      <script src="https://rawgit.com/apclemens/StarGraph/master/src/otherCode.js"></script>
-      <link rel="stylesheet" href="https://rawgit.com/apclemens/StarGraph/master/src/otherStyle.css">
+      <script src="otherCode.js"></script>
+      <link rel="stylesheet" href="otherStyle.css">
       <script src="code.js"></script>
       <script>
          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -17,54 +17,61 @@
          ga('send', 'pageview');
          
       </script>
+      <script>
+         $(function(){
+         $('.settings-open').on('mouseover',function(e){
+          $('#settings-panel').css('display','block');
+         }).on('mouseout',function(e){
+          $('#settings-panel').css('display','none');
+         })
+         $('#settings-panel').on('mouseover',function(e){
+          $(this).css('display','block')
+         }).on('mouseout',function(e){
+          $(this).css('display','none')
+         })
+         $('#link').on('mouseover',function(e){
+          $('#settings-panel').css('display','block')
+         })
+         })
+      </script>
       <link rel="shortcut icon" href="https://dl.dropboxusercontent.com/s/jiqn23ihoelt7qd/favicon.ico" />
    </head>
    <body>
-         <div id="backImage"></div>
-         <div id="attribute"></div>
-         <div id="cy"></div>
-         <div id="movieName"></div>
-         <input type="text" name="search" id="addActor" class="float input" style="top:15px; left:15px" onkeyup="tmdbObject.getSugg(event.keyCode, this.value)" placeholder="Add an actor" />
-         <div id="movieList" class="float" style="top:60px; left:15px"></div>
-         <label style="bottom:285px;left:45px" class="float">
-            Link to 
-            <select id='link'>
-               <option value="none">None</option>
-               <option value="wiki">Wikipedia</option>
-               <option value="rt">Rotten Tomatoes</option>
-               <option value="imdb">IMDb</option>
-               <option value="tmdb">The Movie Database</option>
-               <option value="website">Movie's website</option>
-            </select>
-         </label>
-         <label style="bottom:255px;left:30px" class="float check">
-         <input type="checkbox" id="crew" tabindex=-1 onclick="changeCrew()"> Include crew </label>
-         <label style="bottom:225px;left:30px" class="float check">
-         <input type="checkbox" id="redraw" tabindex=-1 onclick="redraw = !redraw" checked> Redraw graph after change </label>
-         <label style="bottom:195px;left:30px" class="float check">
-         <input type="checkbox" id="showPics" onclick="changePictures()" tabindex=-1> Show pictures </label>
-         <button class="float control" style="bottom: 165px; left: 45px" onclick="cy.fit()" tabindex=-1>Fit to screen</button>
-         <button class="float control" style="bottom: 135px; left: 45px" onclick="restoreMovies();" tabindex=-1>Restore removed movies</button>
-         <button class="float control" style="bottom: 105px; left: 45px" onclick="cy.layout({name: $('input[name=\'layout\']:checked').val(),animate:false,padding:10});" tabindex=-1>Redraw</button>
-         <button class="float control" style="bottom: 75px; left: 45px" onclick="cy.center()" tabindex=-1>Center graph</button>
-         <label for="circle" class="float control" style="bottom:45px;left:30px"> <input type="radio" checked="checked" name="layout" value="circle" id="circle" /> Circle layout</label><br />
-         <label for="force" class="float control" style="bottom:15px;left:30px"> <input type="radio" name="layout" value="cola" id="force" /> Force-directed layout</label><br />
-         <input id="zoom" class="float control" type="range" orient="vertical" name="points" min="0.1" max="3" step=".1" style="bottom:15px; left:15px" oninput="zoom(this.value);" tabindex=-1>
-         <div class="popUpBannerBox">
-            <div class="popUpBannerInner">
-               <div class="popUpBannerContent">
-                  <h2>About Star Graph</h2>
-                  <p><a href="javascript:void(0)" class="closeButton" onclick="$('.popUpBannerBox').fadeOut('2000')">Close</a>
-                  </p>
-                  <p>Star Graph is a site that creates <a target="_blank" href="https://en.wikipedia.org/wiki/Co-stardom_network">co-stardom networks</a> between film actors.</p>
-                  <p>Add an actor by typing his or her name in the top left field. Remove an actor by right-clicking his or her node.</p>
-                  <p>You can also remove all instances of a movie by right clicking any of its edges.</p>
-                  <p>The site uses <a target="_blank" href="https://jquery.com/">jQuery</a> and <a target="_blank" href="http://js.cytoscape.org/">Cytoscape.js</a> to create the graph.</p>
-                  <p>All data and images come from <a target="_blank" href="https://www.themoviedb.org/">The Movie Database</a>.</p>
-                  <p>Contact <a href="mailto:stargraphio@gmail.com">stargraphio@gmail.com</a> with questions, comments, suggestions, or if you just want to chat.</p>
-               </div>
+      <div id="backImage"></div>
+      <div id="attribute"></div>
+      <div id="cy"></div>
+      <div id="movieName"></div>
+      <input type="text" name="search" id="addActor" class="float input" style="top:15px; left:15px" onkeyup="tmdbObject.getSugg(event.keyCode, this.value)" placeholder="Add an actor" />
+      <a href='javascript:void(0)'><img src="https://dl.dropboxusercontent.com/s/dtu1ssvtbuwyzmr/settings.png" class="settings-open float" style="bottom:15px;left:15px;width:45px;height:45px"></a>
+      <div id="settings-panel" style="display:none;">
+         <div style="bottom:195px;left:120px" class='float setting' id='link' onclick="changeLink();"><img style="bottom:195px;left:120px" src="https://dl.dropboxusercontent.com/s/3sqs4ltx1gtlc1n/link.png" class='float'><img id='linkIcon' src="https://dl.dropboxusercontent.com/s/pccgsdqk9mrupee/none.png" class='float' style="bottom:195px;left:195px"></div>
+         <div style="bottom:105px;left:120px" class='float setting' id='layout' onclick="changeLayout();"><img style="bottom:105px;left:120px" src="https://dl.dropboxusercontent.com/s/ukzq177bvg0zzy7/layout.png" class='float'><img id='layoutIcon' src="https://dl.dropboxusercontent.com/s/qp6fjgo026f8joo/circle.png" class='float' style="bottom:105px;left:195px"></div>
+         <div style="bottom:285px;left:45px" class="float" id='settings-display'>Settings</div>
+         <input type='checkbox' onclick="changeCrew()" name='crew' value='valuable' id="crew"/><label for="crew" style="bottom:90px;left:45px" class="float check setting" id="crew2"></label> 
+         <input type='checkbox' onclick="redraw = !redraw;setDisplay('redraw2');" name='redraw' value='valuable' id="redraw"/><label for="redraw" style="bottom:150px;left:45px" class="float check setting" id="redraw2"></label> 
+         <input type='checkbox' onclick="changePictures()" name='showPics' value='valuable' id="showPics"/><label for="showPics" style="bottom:210px;left:45px" class="float check setting" id="showPics2"></label> 
+         <input type="image" src="https://cdn3.iconfinder.com/data/icons/iconic-1/32/fullscreen_alt-128.png" class="float control setting" id="fit" style="bottom:30px;left:45px;width:30px;height:30px" onclick="cy.fit()" tabindex=-1 alt="Fit to screen">
+         <input type="image" src="http://i.stack.imgur.com/I3b6V.jpg" class="float control setting" style="bottom:30px;left:90px;width:30px;height:30px" id="restore" onclick="restoreMovies();" tabindex=-1 alt="Restore removed movies">
+         <input type="image" src="https://image.freepik.com/free-icon/loading-back-refresh_318-30171.png" class="float control setting" style="bottom:30px;left:135px;width:30px;height:30px" id="redraw" onclick="cy.layout({name: $('input[name=\'layout\']:checked').val(),animate:false,padding:10});" tabindex=-1 alt="Redraw">
+         <input type="image" src="https://cdn1.iconfinder.com/data/icons/multimedia-marketing/512/8-512.png" class="float control setting" style="bottom:30px;left:180px;width:30px;height:30px" id="center" onclick="cy.center()" tabindex=-1 alt="Center graph">
+         <input type="image" src="https://cdn2.iconfinder.com/data/icons/windows-8-metro-style/512/erase.png" class="float control setting" style="bottom:30px;left:225px;width:30px;height:30px" id="clear" onclick="cy.remove(cy.nodes())" tabindex=-1 alt="Clear graph">
+         <input id="zoom" class="float control setting" type="range" orient="vertical" name="points" min="0.1" max="3" step=".1" style="bottom:15px; left:15px" oninput="zoom(this.value);" tabindex=-1>
+      </div>
+      <div class="popUpBannerBox">
+         <div class="popUpBannerInner">
+            <div class="popUpBannerContent">
+               <h2>About Star Graph</h2>
+               <p><a href="javascript:void(0)" class="closeButton" onclick="$('.popUpBannerBox').fadeOut('2000')">Close</a>
+               </p>
+               <p>Star Graph is a site that creates <a target="_blank" href="https://en.wikipedia.org/wiki/Co-stardom_network">co-stardom networks</a> between film actors.</p>
+               <p>Add an actor by typing his or her name in the top left field. Remove an actor by right-clicking his or her node.</p>
+               <p>You can also remove all instances of a movie by right clicking any of its edges.</p>
+               <p>The site uses <a target="_blank" href="https://jquery.com/">jQuery</a> and <a target="_blank" href="http://js.cytoscape.org/">Cytoscape.js</a> to create the graph.</p>
+               <p>All data and images come from <a target="_blank" href="https://www.themoviedb.org/">The Movie Database</a>.</p>
+               <p>Contact <a href="mailto:stargraphio@gmail.com">stargraphio@gmail.com</a> with questions, comments, suggestions, or if you just want to chat.</p>
             </div>
          </div>
-         <a href="javascript:void(0)" class="float" id="show_about" onclick="$('.popUpBannerBox').fadeIn('2000');" style="bottom:15px;right:15px;color:black" tabindex=-1>about</a>
+      </div>
+      <a href="javascript:void(0)" class="float" id="show_about" onclick="$('.popUpBannerBox').fadeIn('2000');" style="bottom:15px;right:15px;color:black" tabindex=-1>about</a>
    </body>
 </html>
