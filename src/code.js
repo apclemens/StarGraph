@@ -11,10 +11,80 @@ var nonCrewLookup = {};
 var avoidingMovies = [];
 var crewEdges = [];
 var includeCrew;
+var iconLookup = {
+  'none': 'https://dl.dropboxusercontent.com/s/pccgsdqk9mrupee/none.png',
+  'wiki': 'https://dl.dropboxusercontent.com/s/4gvdmgzoft6goob/wiki.png',
+  'rt': 'https://dl.dropboxusercontent.com/s/uzbts0gd4mdohzu/rt.png',
+  'imdb': 'https://dl.dropboxusercontent.com/s/zmd0q83rsdpg0ge/imdb.png',
+  'tmdb': 'https://dl.dropboxusercontent.com/s/dx9nxwgqk125s5a/tmdb.png',
+  'circle': 'https://dl.dropboxusercontent.com/s/qp6fjgo026f8joo/circle.png',
+  'cola': 'https://dl.dropboxusercontent.com/s/8rrfdsevakqhtst/cola.png'
+}
 var showingPics;
 var redraw;
 var cy;
+var layout = 0;
+var layoutCycle = ['circle', 'cola']
+var layoutNames = ['Circle', 'Force-directed']
+var linkTo = 0;
+var linkCycle = ['none', 'wiki', 'rt', 'imdb', 'tmdb'];
+var linkNames = ['none', 'Wikipedia', 'Rotten Tomatoes', 'IMDb', 'The Movie Database'];
+var displayLookup = function(id) {
+  var toDisplay = '';
+  switch (id) {
+    case 'link':
+      toDisplay = 'Link to: ' + linkNames[linkTo];
+      break;
+    case 'layout':
+      toDisplay = 'Layout: ' + layoutNames[layout];
+      break;
+    case 'crew2':
+      if (includeCrew) {
+        toDisplay = 'Include crew (on)';
+      } else {
+        toDisplay = 'Include crew (off)';
+      }
+      break;
+    case 'redraw2':
+      if (redraw) {
+        toDisplay = 'Redraw after change (on)';
+      } else {
+        toDisplay = 'Redraw after change (off)';
+      }
+      break;
+    case 'showPics2':
+      if (showingPics) {
+        toDisplay = 'Show pictures (on)';
+      } else {
+        toDisplay = 'Show pictures (off)';
+      }
+      break;
+    case 'fit':
+      toDisplay = 'Fit to screen';
+      break;
+    case 'restore':
+      toDisplay = 'Restore removed movies';
+      break;
+    case 'redraw':
+      toDisplay = 'Redraw graph';
+      break;
+    case 'center':
+      toDisplay = 'Center graph';
+      break;
+    case 'clear':
+      toDisplay = 'Clear graph';
+      break;
+    case 'zoom':
+      toDisplay = 'Zoom (' + cy.zoom() + ')';
+      break;
+  };
+  return toDisplay;
+};
 var linkLookup = {};
+
+function setDisplay(id) {
+  document.getElementById('settings-display').innerHTML = displayLookup(id)
+}
 
 function getYear(release_date) {
   if (release_date == null) {
@@ -25,8 +95,9 @@ function getYear(release_date) {
 }
 
 function restoreMovies() {
-  for(var i=0;i<avoidingMovies.length;i++) {
-    restoreMovie(avoidingMovies[i]);
+  console.log('hello');
+  while (avoidingMovies.length > 0) {
+    restoreMovie(avoidingMovies[0]);
   }
   updateURL();
 }
@@ -63,11 +134,17 @@ var tmdbObject = {
       this.getName(actID);
     }
     this.get_data("http://api.themoviedb.org/3/person/" + String(actID) + "/movie_credits?api_key=" + this.api_key, function(xmlhttp) {
-      if(Object.keys(pos).length===0){pos = centerOfGraph();}
+      if (Object.keys(pos).length === 0) {
+        pos = centerOfGraph();
+      }
       eval("var actorRoles = " + xmlhttp.responseText + ".cast");
       eval("var crewRoles = " + xmlhttp.responseText + ".crew");
       var picURL;
-      if(picLookup[actID]===null){picURL='https://assets.tmdb.org/assets/91c0541cff7ec4947514edd379f0ffd1/images/no-profile-w185.jpg';} else {picURL='https://image.tmdb.org/t/p/w396' + picLookup[actID];}
+      if (picLookup[actID] === null) {
+        picURL = 'https://assets.tmdb.org/assets/91c0541cff7ec4947514edd379f0ffd1/images/no-profile-w185.jpg';
+      } else {
+        picURL = 'https://image.tmdb.org/t/p/w396' + picLookup[actID];
+      }
       cy.add({
         group: "nodes",
         data: {
@@ -156,7 +233,7 @@ var tmdbObject = {
       changeCrew();
       gotRoles[actID] = true;
       $("#addActor").val('');
-	  updateURL();
+      updateURL();
     });
   },
   getSugg: function(key, query) {
@@ -203,12 +280,11 @@ var tmdbObject = {
   getMovieLinks: function(movieID) {
     this.get_data("http://api.themoviedb.org/3/movie/" + movieID + "?api_key=" + this.api_key, function(xmlhttp) {
       eval('var data = ' + xmlhttp.responseText);
-      var movieName = movieLookup[movieID].replace('&','and');
+      var movieName = movieLookup[movieID].replace('&', 'and');
       linkLookup[movieID] = {};
       linkLookup[movieID].none = '';
-      linkLookup[movieID].website = data.homepage;
-      linkLookup[movieID].wiki = 'http://www.google.com/search?q=site:en.wikipedia.org+'+movieName.replace(' ','+')+'+film&btnI';
-      linkLookup[movieID].rt = 'http://www.google.com/search?q=site:rottentomatoes.com+'+movieName.replace(' ','+')+'&btnI';
+      linkLookup[movieID].wiki = 'http://www.google.com/search?q=site:en.wikipedia.org+' + movieName.replace(' ', '+') + '+film&btnI';
+      linkLookup[movieID].rt = 'http://www.google.com/search?q=site:rottentomatoes.com+' + movieName.replace(' ', '+') + '&btnI';
       linkLookup[movieID].imdb = 'http://www.imdb.com/title/' + data.imdb_id;
       linkLookup[movieID].tmdb = 'https://www.themoviedb.org/movie/' + movieID;
     });
@@ -230,11 +306,12 @@ function changeCrew() {
     }
   }
   updateURL();
+  setDisplay('crew2');
 }
 
 function redrawGraph() {
   cy.layout({
-    name: $('input[name="layout"]:checked').val(),
+    name: layoutCycle[layout],
     animate: false,
     padding: 10
   });
@@ -319,6 +396,7 @@ function changePictures() {
     showingPics = false;
   }
   updateURL();
+  setDisplay('showPics2');
 }
 
 function removeMovie(movieID) {
@@ -363,7 +441,6 @@ function restoreMovie(movieID) {
   }
   var index = avoidingMovies.indexOf(movieID);
   avoidingMovies.splice(index, 1);
-  getMovieList();
 }
 
 function centerOfGraph() {
@@ -388,11 +465,22 @@ function centerOfGraph() {
   }
 }
 
+function changeLink() {
+  linkTo = (linkTo + 1) % linkCycle.length;
+  document.getElementById('linkIcon').src = iconLookup[linkCycle[linkTo]];
+  setDisplay('link');
+}
+
+function changeLayout() {
+  layout = (layout + 1) % layoutCycle.length;
+  document.getElementById('layoutIcon').src = iconLookup[layoutCycle[layout]];
+  setDisplay('layout');
+}
+
 function openLink(id) {
-  var link = document.getElementById("link").value;
-  var url = linkLookup[id][link];
+  var url = linkLookup[id][linkCycle[linkTo]];
   if (url !== '') {
-    var win = window.open(linkLookup[id][link], '_blank');
+    var win = window.open(linkLookup[id][linkCycle[linkTo]], '_blank');
     win.focus();
   }
 }
@@ -402,13 +490,14 @@ function zoom(v) {
     level: Number(v),
     position: centerOfGraph()
   });
+  setDisplay('zoom');
 }
 
 $(document).ready(function() {
   showingPics = document.getElementById("showPics").checked;
   redraw = document.getElementById("redraw").checked;
   includeCrew = document.getElementById("crew").checked;
-
+  console.log(layoutCycle[layout]);
   cy = cytoscape({
     container: document.getElementById('cy'),
     style: cytoscape.stylesheet()
@@ -437,7 +526,7 @@ $(document).ready(function() {
         'line-color': 'black',
       }),
     layout: {
-      name: $('input[name="layout"]:checked').val(),
+      name: layoutCycle[layout], //$('input[name="layout"]:checked').val(),
       padding: 10,
       animate: false
     },
@@ -445,10 +534,10 @@ $(document).ready(function() {
   });
   cy.on('zoom', function() {
     document.getElementById("zoom").value = cy.zoom();
-	updateURL();
+    updateURL();
   });
   cy.on('tapend', function() {
-	updateURL();
+    updateURL();
   });
   document.oncontextmenu = function() {
     return false;
@@ -465,9 +554,11 @@ $(document).ready(function() {
     if (redraw) {
       redrawGraph();
     }
-      updateURL();
+    updateURL();
   });
-  cy.on('tapend', 'node', function(evt) {updateURL();});
+  cy.on('tapend', 'node', function(evt) {
+    updateURL();
+  });
   cy.on('cxttap', 'edge', function(evt) {
     removeMovie(evt.cyTarget.id().split('.')[0]);
   });
@@ -480,55 +571,85 @@ $(document).ready(function() {
   cy.on('mouseout', 'edge', function(evt) {
     undisplayMovie(evt.cyTarget.id().split('.')[0]);
   });
-  
+  $('.setting').hover(function() {
+    setDisplay(this.id);
+  }, function() {
+    document.getElementById('settings-display').innerHTML = 'Settings'
+  })
+
   var url = window.location.href;
-  var urlStart=url.indexOf("?c=")+3;
-  if(urlStart!==2){
-  var code = url.slice(url.indexOf("?c=")+3,url.length);
-  placeCode(code);}
+  var urlStart = url.indexOf("?c=") + 3;
+  if (urlStart !== 2) {
+    var code = url.slice(url.indexOf("?c=") + 3, url.length);
+    placeCode(code);
+  }
 });
 
 function updateURL() {
   var code = getCode();
-  var url = window.location.href.split('?')[0]+code;
+  var url = window.location.href.split('?')[0] + code;
   history.pushState('data', '', url);
 }
 
 function getCode() {
-  if(cy.nodes().length===0){return '';}
+  if (cy.nodes().length === 0) {
+    return '';
+  }
   var codeComponents = [''];
-  if(showingPics) {codeComponents[0] += '1';} else {codeComponents[0]+='0';}
-  if(includeCrew) {codeComponents[0] += '1';} else {codeComponents[0]+='0';}
-  codeComponents[codeComponents.length]=cy.zoom();
-  codeComponents[codeComponents.length]=cy.pan('x');
-  codeComponents[codeComponents.length]=cy.pan('y');
-  codeComponents[codeComponents.length]=cy.nodes().length;
-  for(var i=0;i<cy.nodes().length;i++) {
+  if (showingPics) {
+    codeComponents[0] += '1';
+  } else {
+    codeComponents[0] += '0';
+  }
+  if (includeCrew) {
+    codeComponents[0] += '1';
+  } else {
+    codeComponents[0] += '0';
+  }
+  codeComponents[codeComponents.length] = cy.zoom();
+  codeComponents[codeComponents.length] = cy.pan('x');
+  codeComponents[codeComponents.length] = cy.pan('y');
+  codeComponents[codeComponents.length] = cy.nodes().length;
+  for (var i = 0; i < cy.nodes().length; i++) {
     codeComponents[codeComponents.length] = cy.nodes()[i].id();
     codeComponents[codeComponents.length] = cy.nodes()[i].position('x');
     codeComponents[codeComponents.length] = cy.nodes()[i].position('y');
   }
-  for(i=0;i<avoidingMovies.length;i++) {
+  for (i = 0; i < avoidingMovies.length; i++) {
     codeComponents[codeComponents.length] = avoidingMovies[i];
   }
-  return '?c='+codeComponents.join(';');
+  return '?c=' + codeComponents.join(';');
 }
 
 function placeCode(code) {
   var components = code.split(';');
-  if(components[0][0]=='1'){document.getElementById("showPics").checked=true;} else {document.getElementById("showPics").checked=false;}
-  if(components[0][1]=='1'){document.getElementById("crew").checked=true;} else {document.getElementById("crew").checked=false;}
-  
+  if (components[0][0] == '1') {
+    document.getElementById("showPics").checked = true;
+  } else {
+    document.getElementById("showPics").checked = false;
+  }
+  if (components[0][1] == '1') {
+    document.getElementById("crew").checked = true;
+  } else {
+    document.getElementById("crew").checked = false;
+  }
+
   cy.zoom(Number(components[1]));
-  cy.pan({x:Number(components[2]),y:Number(components[3])});
-  
-  for(var i=5;i<3*Number(components[4])+5;i+=3) {
+  cy.pan({
+    x: Number(components[2]),
+    y: Number(components[3])
+  });
+
+  for (var i = 5; i < 3 * Number(components[4]) + 5; i += 3) {
     tmdbObject.getName(components[i]);
   }
-  for(i=5;i<3*Number(components[4])+5;i+=3) {
-    tmdbObject.addActor(components[i], {x:Number(components[i+1]), y:Number(components[i+2])}, false);
+  for (i = 5; i < 3 * Number(components[4]) + 5; i += 3) {
+    tmdbObject.addActor(components[i], {
+      x: Number(components[i + 1]),
+      y: Number(components[i + 2])
+    }, false);
   }
-  for(i=3*Number(components[4])+5;i<components.length;i++) {
+  for (i = 3 * Number(components[4]) + 5; i < components.length; i++) {
     removeMovie(components[i]);
   }
   changePictures();
