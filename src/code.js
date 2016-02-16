@@ -589,7 +589,7 @@ function updateURL() {
   var code = getCode();
   var url = window.location.href.split('?')[0] + code;
   history.pushState('data', '', url);
-  _gqa.push(['_setCustomVar',1,'URL',window.location.href]);
+  _gaq.push(['_setCustomVar',1,'URL',window.location.href]);
 }
 
 function getCode() {
