@@ -95,7 +95,6 @@ function getYear(release_date) {
 }
 
 function restoreMovies() {
-  console.log('hello');
   while (avoidingMovies.length > 0) {
     restoreMovie(avoidingMovies[0]);
   }
@@ -313,7 +312,7 @@ function redrawGraph() {
   cy.layout({
     name: layoutCycle[layout],
     animate: false,
-    padding: 10
+    nodeSpacing:function(node){return 100}
   });
 }
 
@@ -497,7 +496,6 @@ $(document).ready(function() {
   showingPics = document.getElementById("showPics").checked;
   redraw = document.getElementById("redraw").checked;
   includeCrew = document.getElementById("crew").checked;
-  console.log(layoutCycle[layout]);
   cy = cytoscape({
     container: document.getElementById('cy'),
     style: cytoscape.stylesheet()
@@ -527,7 +525,7 @@ $(document).ready(function() {
       }),
     layout: {
       name: layoutCycle[layout], //$('input[name="layout"]:checked').val(),
-      padding: 10,
+      nodeSpacing:function(node){return 100},
       animate: false
     },
     ready: function() {}
