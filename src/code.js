@@ -312,7 +312,7 @@ function redrawGraph() {
   cy.layout({
     name: layoutCycle[layout],
     animate: false,
-    nodeSpacing:function(node){return 100}
+    nodeSpacing:function(node){return 50}
   });
 }
 
@@ -525,7 +525,7 @@ $(document).ready(function() {
       }),
     layout: {
       name: layoutCycle[layout], //$('input[name="layout"]:checked').val(),
-      nodeSpacing:function(node){return 100},
+      nodeSpacing:function(node){return 50},
       animate: false
     },
     ready: function() {}
