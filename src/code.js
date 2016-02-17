@@ -587,7 +587,8 @@ function updateURL() {
   var code = getCode();
   var url = window.location.href.split('?')[0] + code;
   history.pushState('data', '', url);
-  ga('set', 'dimension1', code);
+  if (!window.DO_NOT_TRACK){
+  ga('set', 'dimension1', code);}
 }
 
 function getCode() {
