@@ -415,7 +415,7 @@ function removeMovie(movieID) {
 
 function addEdge(movieID, source, target) {
   var id = movieID + '.' + Math.min(source, target) + '.' + Math.max(source, target);
-  if (cy.$('#' + id).isEdge()) {
+  if (cy.getElementById(id).isEdge()) {
     return;
   }
   cy.add({
