@@ -142,20 +142,20 @@ padding: 0 0 0 0px;
 
 
 #crew + label{
-background: url('https://dl.dropboxusercontent.com/s/ear21mu29o6wml2/crew-off.png');
+background: url('resources/crew-off.png');
 }
 #crew:checked + label{
-background: url('https://dl.dropboxusercontent.com/s/jasc0i3pv92c2nw/crew-on.png');
+background: url('resources/crew-on.png');
 }
 #redraw + label{
-background: url('https://dl.dropboxusercontent.com/s/p1zxeajxr7qqu9j/keep-layout-off.png');
+background: url('resources/keep-layout-off.png');
 }
 #redraw:checked + label{
-background: url('https://dl.dropboxusercontent.com/s/s0kdpe27ci6f1xp/keep-layout-on.png');
+background: url('resources/keep-layout-on.png');
 }
 #showPics + label{
-background: url('https://dl.dropboxusercontent.com/s/3qr33uu9rw1f7f5/show-pics-off.png');
+background: url('resources/show-pics-off.png');
 }
 #showPics:checked + label{
-background: url('https://dl.dropboxusercontent.com/s/vr0agtkqxy1r27t/show-pics-on.png');
+background: url('resources/show-pics-on.png');
 }

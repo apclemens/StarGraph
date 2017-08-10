@@ -12,13 +12,13 @@ var avoidingMovies = [];
 var crewEdges = [];
 var includeCrew;
 var iconLookup = {
-    'none': 'https://dl.dropboxusercontent.com/s/pccgsdqk9mrupee/none.png',
-    'wiki': 'https://dl.dropboxusercontent.com/s/4gvdmgzoft6goob/wiki.png',
-    'rt': 'https://dl.dropboxusercontent.com/s/uzbts0gd4mdohzu/rt.png',
-    'imdb': 'https://dl.dropboxusercontent.com/s/zmd0q83rsdpg0ge/imdb.png',
-    'tmdb': 'https://dl.dropboxusercontent.com/s/dx9nxwgqk125s5a/tmdb.png',
-    'circle': 'https://dl.dropboxusercontent.com/s/qp6fjgo026f8joo/circle.png',
-    'cola': 'https://dl.dropboxusercontent.com/s/8rrfdsevakqhtst/cola.png'
+    'none': 'resources/none.png',
+    'wiki': 'resources/wiki.png',
+    'rt': 'resources/rt.png',
+    'imdb': 'resources/imdb.png',
+    'tmdb': 'resources/tmdb.png',
+    'circle': 'resources/circle.png',
+    'cola': 'resources/cola.png'
 };
 var showingPics;
 var redraw;
