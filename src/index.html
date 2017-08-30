@@ -21,7 +21,7 @@
       </script>
       <script>
          $(function(){
-         $('.settings-open').on('mouseover',function(e){
+         $('.settings-open').on('mouseover tap',function(e){
           $('#settings-panel').css('display','block');
          }).on('mouseout',function(e){
           $('#settings-panel').css('display','none');
@@ -35,6 +35,11 @@
           $('#settings-panel').css('display','block')
          })
          })
+         $(document).on('tap',function(e){
+            if(!($('#settings-panel').is(e.target))) {
+               $('#settings-panel').css('display','none');
+            }
+         });
       </script>
       <link rel="shortcut icon" href="resources/favicon.ico" />
    </head>
