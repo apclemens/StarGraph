@@ -36,7 +36,9 @@
          })
          })
          $(document).on('tap',function(e){
+            $('#addActor').val('tap1');
             if(!($('#settings-panel').is(e.target))) {
+            $('#addActor').val('tap2');
                $('#settings-panel').css('display','none');
             }
          });
