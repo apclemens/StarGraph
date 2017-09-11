@@ -496,7 +496,6 @@ function openLink(id) {
 }
 
 function zoom(v) {
-    console.trace();
     cy.zoom({
         level: Number(v),
         position: centerOfGraph()
