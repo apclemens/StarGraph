@@ -594,6 +594,13 @@ $(document).ready(function() {
         var code = url.slice(url.indexOf("?c=") + 3, url.length);
         placeCode(code);
     }
+    
+    
+    var settings = QuickSettings.create(0,0, "Settings", $('#settings-panel'));
+    settings.addBoolean("boolean title", true, function() {console.log('hello');});
+
+
+
 });
 
 function updateURL() {
@@ -669,3 +676,8 @@ function placeCode(code) {
     changePictures();
     changeCrew();
 }
+
+
+
+
+    
