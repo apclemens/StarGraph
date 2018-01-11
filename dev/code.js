@@ -12,13 +12,13 @@ var avoidingMovies = [];
 var crewEdges = [];
 var includeCrew;
 var iconLookup = {
-    'none': 'resources/none.png',
-    'wiki': 'resources/wiki.png',
-    'rt': 'resources/rt.png',
-    'imdb': 'resources/imdb.png',
-    'tmdb': 'resources/tmdb.png',
-    'circle': 'resources/circle.png',
-    'cola': 'resources/cola.png'
+    'none': '/resources/none.png',
+    'wiki': '/resources/wiki.png',
+    'rt': '/resources/rt.png',
+    'imdb': '/resources/imdb.png',
+    'tmdb': '/resources/tmdb.png',
+    'circle': '/resources/circle.png',
+    'cola': '/resources/cola.png'
 };
 var showingPics;
 var redraw;
