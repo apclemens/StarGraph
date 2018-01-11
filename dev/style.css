@@ -13,6 +13,9 @@ a:active {
 body {
     font: 16px "Lucida Sans Unicode", "Lucida Grande", sans-serif;
 }
+#addActor {
+    padding: 3px;
+}
 #backImage {
     background-color: grey;
     background-position: center;
@@ -58,11 +61,6 @@ body {
     float: right;
     position: fixed;
 }
-label {
-    display: block;
-    padding-left: 15px;
-    text-indent: -15px;
-}
 .input {
     border-color: #cccccc;
     border-radius: 50px;
@@ -70,17 +68,8 @@ label {
     border-width: 6px;
     box-shadow: 0px 0px 5px 0px rgba(42, 42, 42, .75);
     font-size: 16px;
-    padding: 3px;
     text-indent: 5;
     width: 300px;
-}
-input[type=range][orient=vertical]
-{
-    writing-mode: bt-lr; /* IE */
-    -webkit-appearance: slider-vertical; /* WebKit */
-    width: 8px;
-    height: 285px;
-    padding: 0 5px;
 }
 .input:focus {
     outline: none;
@@ -108,6 +97,9 @@ input[type=range][orient=vertical]
     position: fixed;
     top: 150px;
 }
+
+
+
 #settings-panel {
   color: #414141;
   background: white;
@@ -116,46 +108,25 @@ input[type=range][orient=vertical]
   left: 0;
   bottom: 0;
   z-index: 99999;
-  width: 270px;
-  height: 320px;
   padding: 6px 8px;
   text-align: left;
   -webkit-box-shadow: 1px 3px 3px rgba(0,0,0,0.4);
   -moz-box-shadow: 1px 3px 3px rgba(0,0,0,0.4);
   box-shadow: 1px 3px 3px rgba(0,0,0,0.4);
 }
-
-
-input[type=checkbox] {
-display:none;
-}
- 
-input[type=checkbox] + label
-{
-height: 45px;
-width: 45px;
-display:inline-block;
-padding: 0 0 0 0px;
+.setting {
+  position: static;
 }
 
-
-
-
-#crew + label{
-background: url('/resources/crew-off.png');
+.qs_main {
+  top: unset !important;
+  bottom: 0px !important;
+  width: 300px !important;
 }
-#crew:checked + label{
-background: url('/resources/crew-on.png');
+.qs_container > input {
+    border: none;
+    height: auto;
 }
-#redraw + label{
-background: url('/resources/keep-layout-off.png');
-}
-#redraw:checked + label{
-background: url('/resources/keep-layout-on.png');
-}
-#showPics + label{
-background: url('/resources/show-pics-off.png');
-}
-#showPics:checked + label{
-background: url('/resources/show-pics-on.png');
+.qs_container > input:focus {
+    border: none;
 }
