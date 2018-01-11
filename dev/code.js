@@ -1,3 +1,13 @@
+function hideVirtualKeyboard () {
+  if (
+    document.activeElement &&
+    document.activeElement.blur &&
+    typeof document.activeElement.blur === 'function'
+  ) {
+    document.activeElement.blur()
+  }
+}
+
 var movieCasts = {};
 var actorLookup = {};
 var movieLookup = {};
@@ -240,7 +250,7 @@ var tmdbObject = {
                 changeCrew();
                 gotRoles[actID] = true;
                 $("#addActor").val('');
-                $('#addActor').blur();
+                hideVirtualKeyboard();
                 updateURL();
             });
         }
