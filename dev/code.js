@@ -22,15 +22,16 @@ var avoidingMovies = [];
 var crewEdges = [];
 var includeCrew;
 var iconLookup = {
-    'none': '/resources/none.png',
-    'wiki': '/resources/wiki.png',
-    'rt': '/resources/rt.png',
-    'imdb': '/resources/imdb.png',
-    'tmdb': '/resources/tmdb.png',
-    'circle': '/resources/circle.png',
-    'cola': '/resources/cola.png'
+    'none': 'resources/none.png',
+    'wiki': 'resources/wiki.png',
+    'rt': 'resources/rt.png',
+    'imdb': 'resources/imdb.png',
+    'tmdb': 'resources/tmdb.png',
+    'circle': 'resources/circle.png',
+    'cola': 'resources/cola.png'
 };
 var showingPics;
+var zoomCallback = true;
 var redraw;
 var cy;
 var layout = 0;
@@ -250,7 +251,7 @@ var tmdbObject = {
                 changeCrew();
                 gotRoles[actID] = true;
                 $("#addActor").val('');
-                hideVirtualKeyboard();
+                //hideVirtualKeyboard();
                 updateURL();
             });
         }
@@ -310,8 +311,8 @@ var tmdbObject = {
     }
 };
 
-function changeCrew() {
-    includeCrew = document.getElementById("crew").checked;
+function changeCrew(value) {
+    includeCrew = value;
     var i;
     if (includeCrew) {
         for (i = 0; i < crewEdges.length; i++) {
@@ -325,7 +326,6 @@ function changeCrew() {
         }
     }
     updateURL();
-    setDisplay('crew2');
 }
 
 function redrawGraph() {
@@ -404,8 +404,8 @@ function undisplayMovie(movieID) {
     });
 }
 
-function changePictures() {
-    if (document.getElementById('showPics').checked) {
+function changePictures(value) {
+    if (value) {
         cy.nodes().forEach(function(ele) {
             ele.addClass('picture');
         });
@@ -417,7 +417,6 @@ function changePictures() {
         showingPics = false;
     }
     updateURL();
-    setDisplay('showPics2');
 }
 
 function removeMovie(movieID) {
@@ -436,6 +435,7 @@ function removeMovie(movieID) {
 }
 
 function addEdge(movieID, source, target) {
+    if(source == target){return;}
     var id = movieID + '.' + Math.min(source, target) + '.' + Math.max(source, target);
     if (cy.getElementById(id).isEdge()) {
         return;
@@ -486,16 +486,12 @@ function centerOfGraph() {
     }
 }
 
-function changeLink() {
-    linkTo = (linkTo + 1) % linkCycle.length;
-    document.getElementById('linkIcon').src = iconLookup[linkCycle[linkTo]];
-    setDisplay('link');
+function changeLink(value) {
+    linkTo = value.index;
 }
 
-function changeLayout() {
-    layout = (layout + 1) % layoutCycle.length;
-    document.getElementById('layoutIcon').src = iconLookup[layoutCycle[layout]];
-    setDisplay('layout');
+function changeLayout(value) {
+    layout = value.index;
 }
 
 function openLink(id) {
@@ -507,17 +503,41 @@ function openLink(id) {
 }
 
 function zoom(v) {
+    if (zoomCallback) {
     cy.zoom({
         level: Number(v),
         position: centerOfGraph()
-    });
-    setDisplay('zoom');
+    });}
+    zoomCallback = true;
 }
 
+var settings;
+
 $(document).ready(function() {
-    showingPics = document.getElementById("showPics").checked;
-    redraw = document.getElementById("redraw").checked;
-    includeCrew = document.getElementById("crew").checked;
+
+
+settings = QuickSettings.create(0, 0, "Settings", document.getElementById('settings-panel')).setCollapsible(true).setDraggable(false)
+  .addRange("Zoom", 0.1, 4, 1, 0.05, zoom)
+  .addDropDown("Link movies to", ['none', 'Wikipedia', 'Rotten Tomatoes', 'IMDb', 'The Movie Database'], changeLink)
+  .addDropDown("Graph layout", ['Circle', 'Force-directed'], changeLayout)
+  .addBoolean("Include crew", false, changeCrew)
+  .addBoolean("Redraw graph after change", true, function(value){redraw = value;})
+  .addBoolean("Show actor pictures", false, changePictures)
+  .addButton("Fit to screen", function(value){cy.fit();})
+  .addButton("Restore removed movies", restoreMovies)
+  .addButton("Redraw graph", function() {cy.layout({name: layoutCycle[layout],animate:false,nodeSpacing:function(node){return 50}});})
+  .addButton("Center graph", function() {cy.center();})
+  .addButton("Clear graph", function() {cy.remove(cy.nodes());})
+  .collapse()
+;
+
+$('.qs_title_bar').click(function() {settings.toggleCollapsed()});
+
+
+
+    showingPics = settings.getValue("Show actor pictures");
+    redraw = settings.getValue("Redraw graph after change");
+    includeCrew = settings.getValue("Include crew");
     cy = cytoscape({
         container: document.getElementById('cy'),
         style: cytoscape.stylesheet()
@@ -554,8 +574,13 @@ $(document).ready(function() {
         },
         ready: function() {}
     });
+
+
+
+
     cy.on('zoom', function() {
-        document.getElementById("zoom").value = cy.zoom();
+        zoomCallback = false;
+        settings.setValue("Zoom", cy.zoom());
         updateURL();
     });
     cy.on('tapend', function() {
@@ -573,6 +598,7 @@ $(document).ready(function() {
     });
     cy.on('cxttap', 'node', function(evt) {
         cy.$('#' + evt.cyTarget.id()).remove();
+        console.log(movieCasts);
         if (redraw) {
             redrawGraph();
         }
@@ -592,11 +618,6 @@ $(document).ready(function() {
     });
     cy.on('mouseout', 'edge', function(evt) {
         undisplayMovie(evt.cyTarget.id().split('.')[0]);
-    });
-    $('.setting').hover(function() {
-        setDisplay(this.id);
-    }, function() {
-        document.getElementById('settings-display').innerHTML = 'Settings';
     });
 
     var url = window.location.href;
@@ -649,14 +670,14 @@ function getCode() {
 function placeCode(code) {
     var components = code.split(';');
     if (components[0][0] == '1') {
-        document.getElementById("showPics").checked = true;
+        settings.setValue("Show actor pictures", true);
     } else {
-        document.getElementById("showPics").checked = false;
+        settings.setValue("Show actor pictures", false);
     }
     if (components[0][1] == '1') {
-        document.getElementById("crew").checked = true;
+        settings.setValue("Include crew", true);
     } else {
-        document.getElementById("crew").checked = false;
+        settings.setValue("Include crew", false);
     }
 
     cy.zoom(Number(components[1]));
