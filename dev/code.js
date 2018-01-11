@@ -240,6 +240,7 @@ var tmdbObject = {
                 changeCrew();
                 gotRoles[actID] = true;
                 $("#addActor").val('');
+                $('#addActor').blur();
                 updateURL();
             });
         }
