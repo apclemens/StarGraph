@@ -531,8 +531,7 @@ settings = QuickSettings.create(0, 0, "Settings", document.getElementById('setti
   .collapse()
 ;
 
-$('.qs_title_bar').click(function() {settings.toggleCollapsed()});
-
+$('.qs_title_bar').on('click tap', function() {settings.toggleCollapsed()});
 
 
     showingPics = settings.getValue("Show actor pictures");
