@@ -219,6 +219,7 @@ var tmdbObject = {
                         movieCasts[movieID][numLines] = actID;
                     }
                 }
+                hideVirtualKeyboard();
                 for (i = 0; i < crewRoles.length; i++) {
                     movieID = crewRoles[i].id;
                     if (movieCasts[movieID] === undefined) {
@@ -251,10 +252,9 @@ var tmdbObject = {
                         movieCasts[movieID][numLines] = actID;
                     }
                 }
-                changeCrew();
+                changeCrew(includeCrew);
                 gotRoles[actID] = true;
                 $("#addActor").val('');
-                hideVirtualKeyboard();
                 updateURL();
             });
         }
@@ -612,10 +612,10 @@ $('.qs_title_bar').on('click tap', function() {settings.toggleCollapsed()});
     cy.on('cxttap', 'edge', function(evt) {
         removeMovie(evt.cyTarget.id().split('.')[0]);
     });
-    cy.on('tap', 'edge', function(evt) {
+    cy.on('click taphold', 'edge', function(evt) {
         openLink(evt.cyTarget.id().split('.')[0]);
     });
-    cy.on('mouseover', 'edge', function(evt) {
+    cy.on('mouseover touchstart', 'edge', function(evt) {
         displayMovie(evt.cyTarget.id().split('.')[0], true);
     });
     cy.on('mouseout', 'edge', function(evt) {
