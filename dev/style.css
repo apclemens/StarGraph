@@ -142,20 +142,20 @@ padding: 0 0 0 0px;
 
 
 #crew + label{
-background: url('resources/crew-off.png');
+background: url('/resources/crew-off.png');
 }
 #crew:checked + label{
-background: url('resources/crew-on.png');
+background: url('/resources/crew-on.png');
 }
 #redraw + label{
-background: url('resources/keep-layout-off.png');
+background: url('/resources/keep-layout-off.png');
 }
 #redraw:checked + label{
-background: url('resources/keep-layout-on.png');
+background: url('/resources/keep-layout-on.png');
 }
 #showPics + label{
-background: url('resources/show-pics-off.png');
+background: url('/resources/show-pics-off.png');
 }
 #showPics:checked + label{
-background: url('resources/show-pics-on.png');
+background: url('/resources/show-pics-on.png');
 }
