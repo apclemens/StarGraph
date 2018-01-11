@@ -390,7 +390,7 @@ function displayMovie(movieID, showName) {
     });
 }
 
-function undisplayMovie(movieID) {
+function undisplayMovie() {
     document.getElementById('movieName').innerHTML = '';
     $('#backImage').css('background-image', "");
     cy.edges().removeClass('highlighted');
@@ -400,10 +400,8 @@ function undisplayMovie(movieID) {
         cy.nodes().style('background-image-opacity', 1);
     }
     cy.edges().forEach(function(ele) {
-        if (ele.id().split('.')[0] == movieID) {
-            ele.source().style('content', actorLookup[ele.source().id()]);
-            ele.target().style('content', actorLookup[ele.target().id()]);
-        }
+        ele.source().style('content', actorLookup[ele.source().id()]);
+        ele.target().style('content', actorLookup[ele.target().id()]);
     });
 }
 
@@ -423,7 +421,7 @@ function changePictures(value) {
 }
 
 function removeMovie(movieID) {
-    undisplayMovie(movieID);
+    undisplayMovie();
     var toRemove = [];
     avoidingMovies[avoidingMovies.length] = movieID;
     cy.edges().forEach(function(ele) {
@@ -616,10 +614,11 @@ $('.qs_title_bar').on('click tap', function() {settings.toggleCollapsed()});
         openLink(evt.cyTarget.id().split('.')[0]);
     });
     cy.on('mouseover touchstart', 'edge', function(evt) {
+        undisplayMovie();
         displayMovie(evt.cyTarget.id().split('.')[0], true);
     });
     cy.on('mouseout', 'edge', function(evt) {
-        undisplayMovie(evt.cyTarget.id().split('.')[0]);
+        undisplayMovie();
     });
 
     var url = window.location.href;
