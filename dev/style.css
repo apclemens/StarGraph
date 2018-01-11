@@ -126,6 +126,8 @@ body {
 .qs_container > input {
     border: none;
     height: auto;
+    width: 100%;
+    text-align: left;
 }
 .qs_container > input:focus {
     border: none;
