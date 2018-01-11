@@ -700,6 +700,6 @@ function placeCode(code) {
     for (i = 3 * Number(components[4]) + 5; i < components.length; i++) {
         removeMovie(components[i]);
     }
-    changePictures();
-    changeCrew();
+    changePictures(settings.getValue("Show actor pictures"));
+    changeCrew(settings.getValue("Include crew"));
 }
