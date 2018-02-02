@@ -164,7 +164,7 @@ var tmdbObject = {
                 if (picLookup[actID] === null) {
                     picURL = 'https://assets.tmdb.org/assets/91c0541cff7ec4947514edd379f0ffd1/images/no-profile-w185.jpg';
                 } else {
-                    picURL = 'https://image.tmdb.org/t/p/w396' + picLookup[actID];
+                    picURL = 'https://image.tmdb.org/t/p/w600_and_h900_bestv2' + picLookup[actID];
                 }
                 cy.add({
                     group: "nodes",
@@ -289,7 +289,7 @@ var tmdbObject = {
                         if (picLookup[item.data] === null) {
                             imgURL = "https://assets.tmdb.org/assets/91c0541cff7ec4947514edd379f0ffd1/images/no-profile-w185.jpg";
                         } else {
-                            imgURL = 'https://image.tmdb.org/t/p/w396' + picLookup[item.data];
+                            imgURL = 'https://image.tmdb.org/t/p/w600_and_h900_bestv2' + picLookup[item.data];
                         }
                         return $("<li></li>")
                             .data("item.autocomplete", item)
@@ -363,7 +363,7 @@ function displayMovie(movieID, showName) {
     if (linkLookup[movieID] === undefined) {
         tmdbObject.getMovieLinks(movieID);
     }
-    $('#backImage').css('background-image', "url('" + "https://image.tmdb.org/t/p/w396/" + posterLookup[movieID] + "')");
+    $('#backImage').css('background-image', "url('" + "https://image.tmdb.org/t/p/w600_and_h900_bestv2" + posterLookup[movieID] + "')");
     var title = movieLookup[movieID];
     var changedNodes = [];
     if (showName) {
