@@ -592,7 +592,7 @@ $('.qs_title_bar').on('click tap', function() {settings.toggleCollapsed()});
     var $moveable = $('#movieName');
     if(window.isMobile) {
       $moveable.css({
-        'top': 20,
+        'top': 67,
         'left': 0
       });
     } else {
