@@ -618,8 +618,7 @@ $('.qs_title_bar').on('click tap', function() {settings.toggleCollapsed()});
     cy.on('click taphold', 'edge', function(evt) {
         openLink(evt.cyTarget.id().split('.')[0]);
     });
-    cy.on('tap', function(evt){undisplayMovie();})
-    cy.on('mouseover touchend', 'edge', function(evt) {
+    cy.on('mouseover touchstart', 'edge', function(evt) {
         undisplayMovie();
         displayMovie(evt.cyTarget.id().split('.')[0], true);
     });
