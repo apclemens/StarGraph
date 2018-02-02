@@ -619,7 +619,7 @@ $('.qs_title_bar').on('click tap', function() {settings.toggleCollapsed()});
         openLink(evt.cyTarget.id().split('.')[0]);
     });
     cy.on('tap', function(evt){undisplayMovie();})
-    cy.on('mouseover touchstart', 'edge', function(evt) {
+    cy.on('mouseover touchend', 'edge', function(evt) {
         undisplayMovie();
         displayMovie(evt.cyTarget.id().split('.')[0], true);
     });
