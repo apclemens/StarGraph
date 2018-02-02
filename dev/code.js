@@ -604,7 +604,6 @@ $('.qs_title_bar').on('click tap', function() {settings.toggleCollapsed()});
     });}
     cy.on('cxttap', 'node', function(evt) {
         cy.$('#' + evt.cyTarget.id()).remove();
-        console.log(movieCasts);
         if (redraw) {
             redrawGraph();
         }
@@ -619,8 +618,8 @@ $('.qs_title_bar').on('click tap', function() {settings.toggleCollapsed()});
     cy.on('click taphold', 'edge', function(evt) {
         openLink(evt.cyTarget.id().split('.')[0]);
     });
+    document.onclick = function() {undisplayMovie();}
     cy.on('mouseover touchstart', 'edge', function(evt) {
-        console.log(evt);
         undisplayMovie();
         displayMovie(evt.cyTarget.id().split('.')[0], true);
     });
