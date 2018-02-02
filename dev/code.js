@@ -590,12 +590,18 @@ $('.qs_title_bar').on('click tap', function() {settings.toggleCollapsed()});
         return false;
     };
     var $moveable = $('#movieName');
+    if(window.isMobile) {
+      $moveable.css({
+        'top': 20,
+        'left': 0
+      });
+    } else {
     $(document).mousemove(function(e) {
         $moveable.css({
             'top': e.pageY - 20,
             'left': e.pageX + 20
         });
-    });
+    });}
     cy.on('cxttap', 'node', function(evt) {
         cy.$('#' + evt.cyTarget.id()).remove();
         console.log(movieCasts);
