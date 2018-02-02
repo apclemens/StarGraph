@@ -614,6 +614,7 @@ $('.qs_title_bar').on('click tap', function() {settings.toggleCollapsed()});
         openLink(evt.cyTarget.id().split('.')[0]);
     });
     cy.on('mouseover touchstart', 'edge', function(evt) {
+        console.log(evt);
         undisplayMovie();
         displayMovie(evt.cyTarget.id().split('.')[0], true);
     });
