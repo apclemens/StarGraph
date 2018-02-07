@@ -584,6 +584,7 @@ $('.qs_title_bar').on('click tap', function() {settings.toggleCollapsed()});
         updateURL();
     });
     cy.on('tapend', function() {
+        if (typeof evt.cyTarget.length) == 'undefined') {undisplayMovie();}
         updateURL();
     });
     document.oncontextmenu = function() {
