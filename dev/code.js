@@ -594,7 +594,9 @@ $('.qs_title_bar').on('click tap', function() {settings.toggleCollapsed()});
     if(window.isMobile) {
       $moveable.css({
         'top': 67,
-        'left': 0
+        'left': 0,
+        'text-align': 'center',
+        'width': '100%'
       });
     } else {
     $(document).mousemove(function(e) {
